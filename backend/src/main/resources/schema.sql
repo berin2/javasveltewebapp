@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS product_order_status(product_order_status_code SERIAL PRIMARY KEY , product_order_status_description VARCHAR(100))

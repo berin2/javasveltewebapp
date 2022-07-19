@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="PLACEHOLDER" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Good Thymes Virtual Grocery</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" th:href="@{/styles/global.css}"/>
+        <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+                let tokenUri = /*[[${emailToken}]]*/ '';
+            /*]]>*/
+
+                function processResponse(statusCode)
+                {
+                    let emailBody = document.getElementById("email_body")
+                    let pNode = document.createElement("p");
+
+                    if(statusCode === 200)
+                        pNode.innerText = "Verification Success.";
+                    else {
+                        pNode.innerText = "Verification Failed."
+                        window.open("https://www.google.com");
+                    }
+                    emailBody.appendChild(pNode);
+                }
+
+                function processFailure()
+                {
+                    let emailBody = document.getElementById("email_body")
+                    emailBody.appendChild("<p>Verification Failed. Verifications token are only valid for one hour.</p>")
+                }
+
+                function verify()
+                {
+
+                fetch(tokenUri,{credentials:"omit",method:"GET"})
+                    .then(
+                        (resp) => {processResponse(resp.status)},
+                        () =>  processFailure()
+                    )
+                    .catch(
+                        (err)  => processFailure()
+                    );
+            }
+        </script>
+    </head>
+
+    <body class="p-4" id="email_body">
+    <section class="p-4 email-container border shadow container-fluid justify-content-center align-items-center overflow-hidden">
+        <div class="row h-100 align-items-center p-4">
+        <h1 class="col-12 border-bottom">SvelteUp Verification</h1>
+            <p class="text-secondary">
+                Hello, <span th:text="${username}" class="text-success"></span>.
+                This email has been registered to a svelteup account.
+                To verify your account and this email, click the verify button below.
+            </p>
+            <div class="col-12 align-items-start">
+                <img class="verify-image" th:src="@{/images/sveltelogo.png}" alt="company logo"/>
+            </div>
+            <a th:href="${emailToken}">verify email</a>
+
+            <p class="col-12">
+                If you did <span class="text-danger">NOT</span> request to verify this email address, do not click on the link.
+            </p>
+            <h3 class="col-12 justify-content-start">Sincerely, the SvelteUp team</h3>
+            </div>
+        </div>
+    </section>
+    </body>
+
+</html>

@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "rootDir": "src",
+  "include": [
+    "src/**/*","src/*","src/Dto/**/*","src/Dto/*","src/SvelteActions/*",
+    "src/Components/*","src/Components/**/*",
+    "src/Services/**/*","src/Components/Payment/**/*",
+    "src/Datastructures/*","src/Datastructures/**/*",
+    "src/PropObjects/*", "src/PropObjects/**/*",
+    "src/Components/Account/*","src/Components/Account/**/*"
+  ],
+  "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
+}

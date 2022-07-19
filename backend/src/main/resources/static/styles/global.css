@@ -1,0 +1,25 @@
+body  {
+    font-family: 'Roboto', sans-serif !important;
+    height: 100vh !important;
+    box-sizing: border-box;
+}
+
+.email-container
+{
+    height: 95vh !important;
+    width: 95vw !important;
+    box-sizing: border-box;
+}
+
+.email-row
+{
+    height: 80% !important;
+    width: 80% !important;
+}
+
+
+.verify-image
+{
+    height: 50% !important;
+    width: 50% !important;
+}
