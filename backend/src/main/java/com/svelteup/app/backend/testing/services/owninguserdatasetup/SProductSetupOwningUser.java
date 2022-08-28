@@ -32,6 +32,7 @@ public class SProductSetupOwningUser extends AOwningUserDataSetup {
         for(int i = 0; i <dataSetupDto.getRandomIntegerWithinRange(); i++ )
         {
             PostProductDto postProductDto  = new PostProductDto();
+            postProductDto.productImageStrings = sImageS3.getTestProductImageArray();
             postProductDto.productName  =  this.fakeItTillYouMakeIt.cat().breed() + " Java";
             postProductDto.productCost  = this.fakeItTillYouMakeIt.number().randomDouble(2,1,15);
             postProductDto.productAcceptsReturns = this.fakeItTillYouMakeIt.bool().bool();

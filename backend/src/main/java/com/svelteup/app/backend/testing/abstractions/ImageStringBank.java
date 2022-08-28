@@ -14,7 +14,7 @@ public class ImageStringBank {
     static {
         try
         {
-            Resource textFile = new ClassPathResource("/static/images/imgText.txt");
+            Resource textFile = new ClassPathResource("/static/images/productImage.txt");
             Resource profileImageFile  = new ClassPathResource("/static/images/profileImg.txt");
             productImage = PNG_PREFIX + StreamUtils.copyToString(textFile.getInputStream(), StandardCharsets.UTF_8);
             profileImage = PNG_PREFIX + StreamUtils.copyToString(profileImageFile.getInputStream(),StandardCharsets.UTF_8);

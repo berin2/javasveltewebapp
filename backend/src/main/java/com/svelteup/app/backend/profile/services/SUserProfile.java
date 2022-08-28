@@ -1,5 +1,6 @@
 package com.svelteup.app.backend.profile.services;
 
+import com.svelteup.app.backend.api.ApplicationApi;
 import com.svelteup.app.backend.aws.s3.services.SImageS3;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.*;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.HttpUsernameService;
@@ -7,6 +8,7 @@ import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
 import com.svelteup.app.backend.profile.models.SvelteUpUserProfile;
 import com.svelteup.app.backend.utils.exceptionutils.SHttpExceptionThrower;
 import lombok.EqualsAndHashCode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,9 @@ public class SUserProfile extends SHttpExceptionThrower implements HttpUsernameS
 {
     protected SSvelteUpUserProfile userProfileService;
     protected SImageS3 s3ImageService;
+
+    @Value("${spring.profiles.active}")
+    protected String profile;
 
     public SUserProfile(SSvelteUpUserProfile userProfileService)
     {
@@ -33,7 +38,12 @@ public class SUserProfile extends SHttpExceptionThrower implements HttpUsernameS
     @Override
     public ResponseEntity<SvelteUpUserAccountDto> get(String username) throws Http400Exception, Http401Exception, Http403Exception, UnsupportedOperationException, NotSupportedException, IOException {
         SvelteUpUserProfile discoveredProfile = this.userProfileService.findBySurrogateIdWithCheck(username,username);
-        String image = s3ImageService.getSingleImage(SvelteUpUserProfile.class,username,0,null);
+        String image = "";
+
+        if(profile.equals(ApplicationApi.DEV_PROFILE))
+            image = s3ImageService.getTestProfileImage();
+        else
+            image = s3ImageService.getSingleImage(SvelteUpUserProfile.class,username,0,null);
         SvelteUpUserAccountDto discoveredUserProfileDto = discoveredProfile.toUserProfileDto(image);
         return ResponseEntity.ok(discoveredUserProfileDto);
     }

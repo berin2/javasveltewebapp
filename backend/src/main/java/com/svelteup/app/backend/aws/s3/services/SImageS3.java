@@ -1,5 +1,10 @@
 package com.svelteup.app.backend.aws.s3.services;
 
+
+
+
+
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.s3.transfer.TransferManager;
@@ -16,7 +21,10 @@ import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
@@ -25,6 +33,7 @@ import javax.annotation.PreDestroy;
 import javax.transaction.NotSupportedException;
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -32,7 +41,10 @@ import java.util.List;
 
 @Service
 @EqualsAndHashCode()
+@Profile("dev")
 public class SImageS3  extends SHttpExceptionThrower implements IUserLifeCycle<Object,OwningUserEvent> {
+    public static String PNG_SPECIFIER = "data:image/png;base64,";
+    public static Integer PNG_SPECIFIER_LENGTH = PNG_SPECIFIER.length();
     protected AmazonS3 s3Client;
 
     protected String bucketName;
@@ -69,6 +81,17 @@ public class SImageS3  extends SHttpExceptionThrower implements IUserLifeCycle<O
     }
 
 
+    protected boolean validateImageFile(String uploadedImage){
+        boolean isValid = false;
+        int pngSpecifierLength = PNG_SPECIFIER.length();
+        if(uploadedImage != null)
+        {
+            isValid = uploadedImage.length() > SImageS3.PNG_SPECIFIER_LENGTH &&
+                      uploadedImage.substring(0, PNG_SPECIFIER_LENGTH).contains(PNG_SPECIFIER);
+        }
+
+        return isValid;
+    }
     protected List<String> processImageFiles(List<String> fileList)
     {
         List<String> returnList = new ArrayList<>();
@@ -224,9 +247,7 @@ public class SImageS3  extends SHttpExceptionThrower implements IUserLifeCycle<O
         List<Integer> deleteList = this.buildDeleteList(imageStrings);
 
         if(deleteList != null && deleteList.size() > 0)
-        {
             this.delete(authenticatedUser,deleteList,identifier,entityClass);
-        }
 
     }
 
@@ -283,5 +304,28 @@ public class SImageS3  extends SHttpExceptionThrower implements IUserLifeCycle<O
 
         return returnList;
     }
+
+    public String convertResourceToString(Resource springResource) throws IOException
+    {
+        FileInputStream fileInputStream = new FileInputStream(springResource.getFile());
+        String returnString = StreamUtils.copyToString(fileInputStream, Charset.defaultCharset());
+        return returnString;
+    }
+    public String getTestProfileImage()
+    {return null;}
+
+    public String getTestProductImage() throws IOException {
+        Resource springFile = new ClassPathResource("/static/images/profileImg.txt");
+        String byteString = this.convertResourceToString(springFile);
+        return byteString;
+    }
+
+    public String [] getTestProductImageArray() throws IOException {
+        Resource springFile = new ClassPathResource("/static/images/productImage.txt");
+        String byteString = this.convertResourceToString(springFile);
+        String [] stringArray = new String[]{byteString,byteString,byteString};
+        return stringArray;
+    }
+
 
 }
