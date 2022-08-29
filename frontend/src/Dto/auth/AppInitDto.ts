@@ -5,13 +5,13 @@ import SvelteUpUserAccountDto from "../profile/SvelteUpUserAccountDto";
 class AppInitDto {
     authenticated:boolean;
     username:string;
-    image: File;
     notifications: NotificationDto [];
     messages: MessageChatDto [];
     cart:object[];
-    account: SvelteUpUserAccountDto;
+    profile: SvelteUpUserAccountDto|null;
     isEmailValidated: boolean;
     isIdentityVerified: boolean;
+    listOfFoes: string [];
 
     constructor()
     {
@@ -20,18 +20,18 @@ class AppInitDto {
         this.messages = [];
         this.cart = [];
         this.listOfFoes = [];
+        this.profile = null;
     }
 
     updateSelf(jsonRes:object) : void
     {
         this.authenticated = true;
         this.username = jsonRes["username"];
-        this.image = jsonRes["image"];
         this.isEmailValidated = jsonRes["isEmailValidated"];
         this.isIdentityVerified = jsonRes["isIdentityVerified"];
         this.messages = jsonRes["messages"];
         this.cart = [];
-        this.account = jsonRes["account"];
+        this.profile = jsonRes["profile"];
 
         for(let notification of jsonRes["notifications"])
         {
@@ -44,13 +44,12 @@ class AppInitDto {
     {
         this.authenticated = false;
         this.username = null;
-        this.image = null;
         this.isEmailValidated = null;
         this.isIdentityVerified = null;
         this.notifications = [];
         this.messages = [];
         this.listOfFoes = [];
-        this.account = null;
+        this.profile = null;
     }
 }
 

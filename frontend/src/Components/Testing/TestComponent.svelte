@@ -2,6 +2,7 @@
     import {ScrollTopAction} from "../SvelteActions/ScrollBottomAction";
     import Graph from "../../Datastructures/Graph";
     import {onMount} from "svelte";
+    import PlaceholderSquare from "../LoadingPlaceHolders/PlaceholderSquare.svelte";
 
     enum Test {
         ONE,
@@ -10,12 +11,12 @@
         UNREACHABLE
     }
 
-    let graph:Graph<Test> = new Graph(Test.UNREACHABLE);
+    let graph: Graph<Test> = new Graph(Test.UNREACHABLE);
 
-    let testArr = ["test","test","test","test","test","test","test","test","test","test","test","test","test","test","test","test","test","test","test","test"];
+    let testArr = ["test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"];
 
     onMount(
-        () =>{
+        () => {
 
 
         }
@@ -37,8 +38,10 @@
 
 
 <h1>Testing</h1>
-<div class="test-div" use:ScrollTopAction>
-    {#each testArr as tes}
-        <p class="test-p" use:ScrollTopAction>{tes}</p>
-    {/each}
-</div>
+
+
+<PlaceholderSquare />
+<PlaceholderSquare />
+<PlaceholderSquare />
+<PlaceholderSquare />
+<PlaceholderSquare />

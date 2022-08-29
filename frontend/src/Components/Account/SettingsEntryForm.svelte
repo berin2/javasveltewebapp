@@ -166,7 +166,6 @@
                     <RadioGroup radios={twoFactorAuthenticationProps} radioGroup = {radioGroup}/>
                 {/if}
                 <div>{messageToRender}</div>
-                <ValidatorMessage bind:isValid={disabled} bind:isNotValidText={"is not valid"} bind:isValidText={"Is valid text"} />
                 <div class="p-3">
                     <BaseButton  color={ThemeClass.app_control_green} value={dispatchButtonText} onClick={submitFunction} disabled={disabled}/>
                 </div>

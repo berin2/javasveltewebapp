@@ -7,8 +7,7 @@
     import AppInitDto from "../../../Dto/auth/AppInitDto";
     import authenticationStore from "../../../Stores/AuthenticationStore";
     import AccountSetup from "./AccountSetupLinks.svelte";
-    import {createEventDispatcher} from "svelte";
-    import {LOGOUT_ACTION} from "../../SvelteActions/ScrollBottomAction";
+    import {isFalsy} from "../../../Validators/IsFalsyObjectValidator";
     import StoreService from "../../../Stores/StoreService";
 
     export let onClick: () => void = () => {
@@ -22,6 +21,8 @@
         " app-modal app-modal-keyframes ";
 
 
+    //@ts-ignore
+    let userProfile: AppInitDto = $authenticationStore;
     let client: HttpClient = $httpClient;
     let reset: () => void = () => {
         $authenticationStore = new AppInitDto();
@@ -88,7 +89,14 @@
                 <h6 class="fw-bold text-black">John Smith</h6>
                 <span class="app-color-gray">john@email.com</span>
             </div>
-            <img  class="img-fluid nav-drawer-header-image rounded-circle shadow m-1" src="/images/user_test_icon.jpeg" alt="img"/>
+
+            {#if !isFalsy(userProfile.profile) && !isFalsy(userProfile.profile.image)}
+                <img  class="img-fluid nav-drawer-header-image rounded-circle shadow m-1" src={userProfile.profile.image} alt="img"/>
+            {:else}
+                <div class="d-flex justify-content-center align-items-center nav-drawer-header-image rounded-circle shadow m-1 bg-success text-white">
+                    {userProfile.username.charAt(0).toUpperCase()}
+                </div>
+            {/if}
         </div>
         <section class="d-flex justify-content-end align-items-center pe-2">
             <input type="button" value="Sign Out" class="btn btn-success" on:click={() => attemptLogout()} />

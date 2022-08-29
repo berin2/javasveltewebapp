@@ -54,6 +54,9 @@ class ApiService
     static getTwoFactorUrl():string { return ApiService.ACCOUNT + "/two_factor_auth";}
     static getAccountDeleteUrl():string { return ApiService.ACCOUNT + "delete";}
 
+    //social profile
+    static getSocialProfileUrl():string{return `${this.AUTH_FULLY_SETUP}/socialprofile`}
+
 
 }
 

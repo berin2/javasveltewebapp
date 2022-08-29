@@ -18,7 +18,6 @@
     import AppInitDto from "./Dto/auth/AppInitDto";
     import ObjectCopyService from "./Services/Utils/ObjectCopyService";
     import ProductCard from "./Components/Store/ProductCard.svelte";
-    import StoreDisplay from "./Components/Store/StoreDisplay.svelte";
     import {ProductDto} from "./Dto/store/ProductDto";
     import ImageService from "./Services/Utils/ImageService";
     import ImageGrid from "./Components/ReusableComponents/LayoutComponents/ImageGrid/ImageGrid.svelte";
@@ -74,10 +73,7 @@
 		top:0px !important;
 		width: 25vw;
 	}
-	.app-container
-	{
-		height: 100vh;
-	}
+
 	main {
 		text-align: center;
 		padding: 1em;
