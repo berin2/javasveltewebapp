@@ -2,6 +2,8 @@ package com.svelteup.app.backend.testing.services.owninguserdatasetup;
 
 import com.braintreegateway.Customer;
 import com.svelteup.app.backend.payment.services.SCustomer;
+import com.svelteup.app.backend.productorder.models.ProductReviewScoreCard;
+import com.svelteup.app.backend.productorder.repositories.RProductReviewScoreCard;
 import com.svelteup.app.backend.profile.models.SvelteUpUserProfile;
 import com.svelteup.app.backend.profile.repositories.RSvelteUpUserProfile;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
@@ -20,6 +22,7 @@ import javax.annotation.PostConstruct;
 @NoArgsConstructor
 public class SSystemEntitySetupOwningUser extends AOwningUserDataSetup {
     @Autowired RSvelteUpUserProfile rSvelteUpUserProfile;
+    @Autowired RProductReviewScoreCard rProductReviewScoreCard;
     @Autowired RSvelteUpUser userRepository;
     @Autowired SCustomer customerService;
     @Autowired AuthorityRepository authorityRepository;
@@ -49,6 +52,7 @@ public class SSystemEntitySetupOwningUser extends AOwningUserDataSetup {
         TEST_SYSTEM_USER = new SvelteUpUser("TEST_SYSTEM","TEST_SYSTEM");
         TEST_SYSTEM_USER = this.userRepository.save(TEST_SYSTEM_USER);
 
+
         TEST_SYSTEM_PROFILE =  new SvelteUpUserProfile(TEST_SYSTEM_USER);
         TEST_SYSTEM_PROFILE.setFirstName("TEST");
         TEST_SYSTEM_PROFILE.setLastName("SYSTEM");
@@ -59,6 +63,10 @@ public class SSystemEntitySetupOwningUser extends AOwningUserDataSetup {
         TEST_SYSTEM_PROFILE.setUserProfileZipCode(7777777);
         TEST_SYSTEM_PROFILE.setAboutMe("TEST SYSTEM");
 
+        ProductReviewScoreCard reviewScoreCard = new ProductReviewScoreCard(TEST_SYSTEM_USER);
+        rProductReviewScoreCard.save(reviewScoreCard);
+
+        TEST_SYSTEM_PROFILE.setProductReviewScoreCard(reviewScoreCard);
         TEST_SYSTEM_PROFILE = rSvelteUpUserProfile.save(TEST_SYSTEM_PROFILE);
         TEST_SYSTEM_CUSTOMER = customerService.intializeEntity(TEST_SYSTEM_USER.getUsername(),TEST_SYSTEM_PROFILE);;
     }

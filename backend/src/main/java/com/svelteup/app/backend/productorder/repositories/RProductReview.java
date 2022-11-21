@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface RProductReview  extends RSurrogateJpaRepository<ProductReview, Long> {
-    public List<ProductReview> findProductReviewsByOwningProductOrder_ProductOrderProduct_SurrogateId(UUID id);
+    public List<ProductReview> findProductReviewsByProductOrder_SurrogateProductId(UUID id);
+
 }

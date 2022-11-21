@@ -19,7 +19,7 @@ public class IdentityEstablishedSvelteUpProfileIdentityInitializer extends Entit
     @Override
     public void initialize(EstablishCustomerIdentityDto identityDto) throws NotSupportedException {
         SvelteUpUserProfile userProfile = profileService.initializeUser(identityDto.user);
-        userProfile.initializeSvelteUpUserProfile(identityDto.svelteUpUserAccountDto);
+        userProfile.initializeSvelteUpUserProfile(identityDto.svelteUpUserProfileDto);
         identityDto.userProfile = userProfile;
     }
 }

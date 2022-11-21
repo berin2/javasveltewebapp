@@ -1,7 +1,8 @@
 package com.svelteup.app.backend.profile.controller;
 
 import com.svelteup.app.backend.api.ApplicationApi;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.AddressDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.utils.controllers.interfaces.HttpController;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
 import org.springframework.http.HttpStatus;
@@ -17,19 +18,19 @@ import javax.transaction.NotSupportedException;
 /**
  * IUserAddressController exposes API endpoints for managing user address HostDescriptor.
  */
-public interface IUserAddressController extends HttpController<Object, SvelteUpUserAccountDto,Object> {
+public interface IUserAddressController extends HttpController<AddressDto, AddressDto,AddressDto> {
     @Override
-    void post(@AuthenticationPrincipal SvelteUpUser authenticatedUser, Object o) throws NotSupportedException;
+    void post(@AuthenticationPrincipal SvelteUpUser authenticatedUser, AddressDto dto) throws NotSupportedException;
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(ApplicationApi.ACCOUNT_ADDRESS)
     @Override
-    void put(@AuthenticationPrincipal SvelteUpUser authenticatedUser, @RequestBody SvelteUpUserAccountDto putUserAddressDto) throws NotSupportedException;
+    void put(@AuthenticationPrincipal SvelteUpUser authenticatedUser, @RequestBody AddressDto putUserAddressDto) throws NotSupportedException;
 
     @Override
-    void delete(@AuthenticationPrincipal SvelteUpUser authenticatedUser, Object o);
+    void delete(@AuthenticationPrincipal SvelteUpUser authenticatedUser, AddressDto dto);
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(ApplicationApi.ACCOUNT_ADDRESS)
-    ResponseEntity<SvelteUpUserAccountDto> get(@AuthenticationPrincipal SvelteUpUser authenticatedUser) throws NotSupportedException;
+    ResponseEntity<AddressDto> get(@AuthenticationPrincipal SvelteUpUser authenticatedUser) throws NotSupportedException;
 }

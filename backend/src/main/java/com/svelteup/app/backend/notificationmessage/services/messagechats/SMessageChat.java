@@ -1,6 +1,7 @@
 package com.svelteup.app.backend.notificationmessage.services.messagechats;
 
-import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheck;
+import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheckAOPTarget;
+import com.svelteup.app.backend.aop.aspects.paireduser.PPairedOwningUserNonPkAccessChecker;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.*;
 
 import com.svelteup.app.backend.modelcontroller.services.abstractions.HttpUuidService;
@@ -26,21 +27,23 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class SMessageChat extends SSurrogateEntityOwningUserNonPk<Long, MessageChat> implements HttpUuidService<PostMessageDto, PostMessageDto>, OwningUserPairedNonPkEntityAccessCheck<MessageChat> {
+public class SMessageChat extends SSurrogateEntityOwningUserNonPk<Long, MessageChat> implements HttpUuidService<PostMessageDto, PostMessageDto> {
 
     protected RMessageChat messageChatRepository;
     protected RMessage messageRepository;
+    protected PPairedOwningUserNonPkAccessChecker pPairedOwningUserNonPkAccessChecker;
 
     public final static String USER_CANNOT_PARTICIPATE_IN_CHAT_ERROR = "%s requested to be a part of MessageChat with surrogate id %s, but said user was not found in owningUsername or secondaryOwningUSername field.";
     public final static String BOTH_USERS_NOT_NULL  = "MessageChat with UUID %s was expected to have at least one user to equal null, but the application discovered neither user is null. authenticatedUser: %s , recieverUsername: %s .";
     public final static Sort MESSAGE_SORT = Sort.by("messageId").ascending();
     private final static Integer MESSAGE_PAGE_SIZE = 10;
 
-    public SMessageChat(RMessageChat surrogateJpaRepository, RMessage messageRepository)
+    public SMessageChat(RMessageChat surrogateJpaRepository, RMessage messageRepository, PPairedOwningUserNonPkAccessChecker pPairedOwningUserNonPkAccessChecker)
     {
         super(surrogateJpaRepository);
         this.messageChatRepository  = surrogateJpaRepository;
         this.messageRepository = messageRepository;
+        this.pPairedOwningUserNonPkAccessChecker = pPairedOwningUserNonPkAccessChecker;
     }
 
     @Override
@@ -88,7 +91,7 @@ public class SMessageChat extends SSurrogateEntityOwningUserNonPk<Long, MessageC
 
     public ResponseEntity<List<PostMessageDto>> getMessageChatsForUser(String authenticatedUser, UUID messageChatId, Integer pageIndex) throws NotSupportedException {
         Pageable requestedPage  = PageRequest.of(pageIndex,MESSAGE_PAGE_SIZE, MESSAGE_SORT);
-        MessageChat discoveredChat = this.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(authenticatedUser,messageChatId);
+        MessageChat discoveredChat = this.findBySurrogateIdSecondaryOwningUserCheck(authenticatedUser,messageChatId);
         Page<Message> discoveredChats = null;
         List<PostMessageDto> discoveredMessageDtos = new ArrayList<>();
 
@@ -142,7 +145,7 @@ public class SMessageChat extends SSurrogateEntityOwningUserNonPk<Long, MessageC
 
     @Override
     public void put(String authenticated_user, PostMessageDto update_DTO) throws Http400Exception, Http401Exception, Http403Exception, Http405Exception, NotSupportedException {
-        MessageChat discoveredMessageChat = this.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(authenticated_user,update_DTO.messageChatId);
+        MessageChat discoveredMessageChat = this.findBySurrogateIdSecondaryOwningUserCheck(authenticated_user,update_DTO.messageChatId);
         Message newMessageChatMessage = new Message(authenticated_user,discoveredMessageChat,update_DTO);
         this.messageRepository.save(newMessageChatMessage);
     }
@@ -150,7 +153,7 @@ public class SMessageChat extends SSurrogateEntityOwningUserNonPk<Long, MessageC
     @Override
     public void delete(String authenticatedUser, UUID secondary_id) throws Http400Exception, Http401Exception, Http405Exception, NotSupportedException
     {
-        MessageChat discoveredChat  = this.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(authenticatedUser,secondary_id);
+        MessageChat discoveredChat  = this.findBySurrogateIdOwningUserCheck(authenticatedUser,secondary_id);
         if(!discoveredChat.isDeletedForUsername(authenticatedUser))
         {
             discoveredChat.deleteChatForUsername(authenticatedUser);
@@ -164,53 +167,5 @@ public class SMessageChat extends SSurrogateEntityOwningUserNonPk<Long, MessageC
     protected boolean isOwningUser(MessageChat messageChat,String authenticatedUser)
     {
         return authenticatedUser.equals(messageChat.getOwningUsername());
-    }
-
-    @Override
-    public MessageChat afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, UUID surrogateId) throws Http403Exception, NotSupportedException {
-        return this.findBySurrogateId(surrogateId);
-    }
-
-    /**
-     * afterReturningIsOwningUserCheck is used to identify if the user is the owning or secondary owning user.
-     *
-     * @param authenticatedUser The user to check against the entity.
-     * @param entitySurrogateId The entity  surrogateId
-     * @return a true Boolean indicating that the authenticatedUser is the owningUser, or false if the user
-     * is the secondary user. Before calling this method, it's important to ensure the user is either the owningUser
-     * or the secondaryOwningUser.
-     */
-    @Override
-    public MessageChat afterReturningIsOwningUserOrSecondaryUserCheck(String authenticatedUser, UUID entitySurrogateId) throws NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    @Override
-    public MessageChat beforeOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, MessageChat entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public MessageChat beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(String authenticatedUser, MessageChat entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public MessageChat beforeOwningUserPairedNonPrimaryKeyIsSecondaryOwningUserCheck(String authenticatedUser, MessageChat entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    /**
-     * beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck ensures a user is neither the primary or secondary owning user.
-     *
-     * @param authenticatedUser the user to permission check.
-     * @param entity            the user to check permissions for.
-     * @return entity the entity passed as a parameter.
-     * @throws Http403Exception      if the user is not listed as secondaryUser and primaryOwningUser.
-     * @throws NotSupportedException if the method call is not supported in implementing service
-     */
-    @Override
-    public MessageChat beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck(String authenticatedUser, MessageChat entity) throws Http403Exception, NotSupportedException {
-        return entity;
     }
 }

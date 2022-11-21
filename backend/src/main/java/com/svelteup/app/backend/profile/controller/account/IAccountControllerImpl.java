@@ -12,11 +12,10 @@ import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions
 import com.svelteup.app.backend.profile.dtos.ContactDto;
 import com.svelteup.app.backend.profile.dtos.DeleteAccountDto;
 import com.svelteup.app.backend.profile.dtos.PasswordChangeDto;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.profile.models.SvelteUpUserProfile;
 import com.svelteup.app.backend.profile.services.SSvelteUpUserProfile;
 import com.svelteup.app.backend.profile.services.SUserContact;
-import com.svelteup.app.backend.profile.services.SUserProfile;
 import com.svelteup.app.backend.security.events.UpdateSessionEvent;
 import com.svelteup.app.backend.security.events.UpdateSessionType;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
@@ -85,7 +84,7 @@ public class IAccountControllerImpl extends SHttpExceptionThrower implements IAc
      * @throws Http500Exception
      */
     @Override
-    public void putPhoneNumber(SvelteUpUser profile, SvelteUpUserAccountDto accountDto) throws Http401Exception, Http403Exception, Http500Exception {
+    public void putPhoneNumber(SvelteUpUser profile, SvelteUpUserProfileDto accountDto) throws Http401Exception, Http403Exception, Http500Exception {
     }
 
     /**
@@ -143,7 +142,7 @@ public class IAccountControllerImpl extends SHttpExceptionThrower implements IAc
      * @throws Http500Exception
      */
     @Override
-    public void putTwoFactorAuth(SvelteUpUser profile, SvelteUpUserAccountDto accountDto) throws Http401Exception, Http403Exception, Http500Exception {
+    public void putTwoFactorAuth(SvelteUpUser profile, SvelteUpUserProfileDto accountDto) throws Http401Exception, Http403Exception, Http500Exception {
 
     }
 
@@ -157,7 +156,7 @@ public class IAccountControllerImpl extends SHttpExceptionThrower implements IAc
      * @throws Http500Exception
      */
     @Override
-    public void putEmail(SvelteUpUser profile, SvelteUpUserAccountDto accountDto) throws Http401Exception, Http403Exception, Http500Exception, IOException, NotSupportedException {
+    public void putEmail(SvelteUpUser profile, SvelteUpUserProfileDto accountDto) throws Http401Exception, Http403Exception, Http500Exception, IOException, NotSupportedException {
        updateVerificationTokenAndResendEmail(profile,accountDto);
     }
 
@@ -182,7 +181,7 @@ public class IAccountControllerImpl extends SHttpExceptionThrower implements IAc
     }
 
     @Override
-    public void updateVerificationTokenAndResendEmail(SvelteUpUser user, SvelteUpUserAccountDto dto) throws NotSupportedException {
+    public void updateVerificationTokenAndResendEmail(SvelteUpUser user, SvelteUpUserProfileDto dto) throws NotSupportedException {
         EmailVerificationToken token = emailVerification.findBySurrogateIdWithCheck(user.getUsername(),user.getUsername());
         token.refreshToken(dto.email);
         Map<String,Object> thymeTemplate = StaticThymeMapBuilderService.buildVerificationMap(user.getUsername(),token.getEmailToken());

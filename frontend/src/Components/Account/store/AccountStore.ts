@@ -1,6 +1,6 @@
 import {Writable, writable} from "svelte/store";
-import type SvelteUpUserAccountDto from "../../../Dto/profile/SvelteUpUserAccountDto";
+import type SvelteUpUserProfileDto from "../../../Dto/profile/SvelteUpUserProfileDto";
 
-let accountStore:Writable<SvelteUpUserAccountDto> = writable(null);
+let accountStore:Writable<SvelteUpUserProfileDto> = writable(null);
 
 export default accountStore;

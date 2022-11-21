@@ -1,8 +1,9 @@
 package com.svelteup.app.backend.profile.controller;
 
 import com.svelteup.app.backend.modelcontroller.controllers.abstractcontroller.AbstractController;
+import com.svelteup.app.backend.profile.dtos.PhoneNumberDto;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.profile.services.SUserPhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,22 +20,22 @@ public class UserPhoneNumberController extends AbstractController implements IUs
     SUserPhoneNumber userPhoneNumberService;
 
     @Override
-    public void post(SvelteUpUser authenticatedUser, Object o) throws NotSupportedException {
+    public void post(SvelteUpUser authenticatedUser, PhoneNumberDto o) throws NotSupportedException {
         this.exceptionThrowerService.throwHttp405("post",this.getClass().toString(),authenticatedUser.getUsername());
     }
 
     @Override
-    public void put(SvelteUpUser authenticatedUser, SvelteUpUserAccountDto putUserAddressDto) throws NotSupportedException {
-        this.userPhoneNumberService.put(authenticatedUser.getUsername(),putUserAddressDto);
+    public void put(SvelteUpUser authenticatedUser, PhoneNumberDto putPhoneNumberDto) throws NotSupportedException {
+        this.userPhoneNumberService.put(authenticatedUser.getUsername(),putPhoneNumberDto);
     }
 
     @Override
-    public void delete(SvelteUpUser authenticatedUser, Object o) {
+    public void delete(SvelteUpUser authenticatedUser, PhoneNumberDto phoneNumberDto) {
         this.exceptionThrowerService.throwHttp405("delete",this.getClass().toString(),authenticatedUser.getUsername());
     }
 
     @Override
-    public ResponseEntity<SvelteUpUserAccountDto> get(SvelteUpUser authenticatedUser) throws NotSupportedException {
+    public ResponseEntity<PhoneNumberDto> get(SvelteUpUser authenticatedUser) throws NotSupportedException {
         return this.userPhoneNumberService.get(authenticatedUser.getUsername());
   }
 }

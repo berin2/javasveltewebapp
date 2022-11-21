@@ -2,8 +2,8 @@
  * @param arg the argument to test
  * @returns true if arg is false, false if not
  */
-import {Writable} from "svelte/store";
 import {stop_propagation} from "svelte/internal";
+import type {Writable} from "svelte/store";
 
 function isFalsy(arg){
     return (arg === null || arg === undefined || arg === '' || arg === 0)
@@ -16,7 +16,7 @@ function isFalsyStore(store:Writable<any>, storeValue:any) : boolean
 
 function isFalsyArray(array: any []):boolean
 {
-    return !isFalsy(array) && !isFalsy(array.length);
+    return !isFalsy(array) && array.length===0;
 }
 
 /**Tests if arg is an instance of a Javascript functionl

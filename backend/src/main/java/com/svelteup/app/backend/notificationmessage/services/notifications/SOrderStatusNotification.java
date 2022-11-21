@@ -1,6 +1,6 @@
 package com.svelteup.app.backend.notificationmessage.services.notifications;
 
-import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheck;
+import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheckAOPTarget;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http403Exception;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.SSurrogateEntityOwningUserNonPk;
 import com.svelteup.app.backend.notificationmessage.dtos.NotificationDto;
@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class SOrderStatusNotification extends SSurrogateEntityOwningUserNonPk<Long, Notification> implements OwningUserPairedNonPkEntityAccessCheck<Notification> {
-
+public class SOrderStatusNotification extends SSurrogateEntityOwningUserNonPk<Long, Notification>{
     protected RNotification notificationRepository;
 
     protected static final String ORDER_PLACED_NOTIFICATION  = "%s has placed an order for %s.";
@@ -124,51 +123,4 @@ public class SOrderStatusNotification extends SSurrogateEntityOwningUserNonPk<Lo
         return returnString;
     }
 
-    @Override
-    public Notification afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, UUID entitySurrogateId) throws Http403Exception, NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    /**
-     * afterReturningIsOwningUserCheck is used to identify if the user is the owning or secondary owning user.
-     *
-     * @param authenticatedUser The user to check against the entity.
-     * @param entitySurrogateId The entity  surrogateId
-     * @return a true Boolean indicating that the authenticatedUser is the owningUser, or false if the user
-     * is the secondary user. Before calling this method, it's important to ensure the user is either the owningUser
-     * or the secondaryOwningUser.
-     */
-    @Override
-    public Notification afterReturningIsOwningUserOrSecondaryUserCheck(String authenticatedUser, UUID entitySurrogateId) throws NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    @Override
-    public Notification beforeOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, Notification entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public Notification beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(String authenticatedUser, Notification entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public Notification beforeOwningUserPairedNonPrimaryKeyIsSecondaryOwningUserCheck(String authenticatedUser, Notification entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    /**
-     * beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck ensures a user is neither the primary or secondary owning user.
-     *
-     * @param authenticatedUser the user to permission check.
-     * @param entity            the user to check permissions for.
-     * @return entity the entity passed as a parameter.
-     * @throws Http403Exception      if the user is not listed as secondaryUser and primaryOwningUser.
-     * @throws NotSupportedException if the method call is not supported in implementing service
-     */
-    @Override
-    public Notification beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck(String authenticatedUser, Notification entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
 }

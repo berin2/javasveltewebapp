@@ -1,5 +1,5 @@
 <script lang="ts">
-    import AppInitDto from "../../../Dto/auth/AppInitDto";
+    import ApplicationUser from "../../../Dto/auth/ApplicationUser";
     import {onMount} from "svelte";
     import NavDrawerItem from "./NavDrawerItem.svelte";
     import authenticationStore from "../../../Stores/AuthenticationStore";

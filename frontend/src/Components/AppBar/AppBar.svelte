@@ -1,15 +1,10 @@
 <script type="ts">
-    import BaseButton from "../ReusableComponents/Buttons/BaseButton.svelte";
     import authenticationStore from "../../Stores/AuthenticationStore";
     import AppBarContentsLoggedOut from "./LoggedOut/AppBarContentsLoggedOut.svelte";
     import AppBarContentsLoggedIn from "./LoggedIn/AppBarContentsLoggedIn.svelte";
-    import AppInitDto from "../../Dto/auth/AppInitDto";
     import MessagePanel from "../Messages/components/ChatWindow.svelte";
-    import {LOGOUT_ACTION,ResetStoreAction} from "../SvelteActions/ScrollBottomAction";
     import StoreService from "../../Stores/StoreService";
     let authentication = $authenticationStore;
-
-
 </script>
 
 <style>

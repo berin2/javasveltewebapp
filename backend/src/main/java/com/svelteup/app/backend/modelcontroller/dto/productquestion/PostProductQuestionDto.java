@@ -15,7 +15,7 @@ public class PostProductQuestionDto {
 
     public PostProductQuestionDto(ProductQuestion productQuestion)
     {
-        this.productId =  productQuestion.getOwningProduct().getSurrogateId();
+        this.productId =  productQuestion.getOwningProductSurrogateId();
         this.productQuestion = productQuestion.getProductQuestion();
         this.productQuestionDate  = StaticDateService.getDateString(productQuestion.getProductQuestionDate());
     }

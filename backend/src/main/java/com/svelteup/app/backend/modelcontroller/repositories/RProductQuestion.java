@@ -12,5 +12,5 @@ import java.util.UUID;
  */
 @Repository
 public interface RProductQuestion extends RSurrogateJpaRepository<ProductQuestion,Long>{
-    Page<ProductQuestion> findProductQuestionsByOwningProduct_SurrogateId(Pageable pageable,UUID productId);
+    Page<ProductQuestion> findProductQuestionsByOwningProductSurrogateId(Pageable pageable,UUID productId);
 }

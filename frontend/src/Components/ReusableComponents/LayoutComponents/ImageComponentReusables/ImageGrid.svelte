@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {isFalsy} from "../../../../Validators/IsFalsyObjectValidator";
+    import {isFalsy, isFalsyArray} from "../../../../Validators/IsFalsyObjectValidator";
     import ComponentH1IconHeader from "../ComponentHeaders/ComponentH1IconHeader.svelte";
     import {onMount} from "svelte";
 
@@ -19,8 +19,9 @@
 
     const CHEVRON_COL: string = " col-1 d-flex flex-column justify-content-center align-items-center "
 
-    $: nextEnabled = !isFalsy(imageByteArray) && selectedIndex < imageByteArray.length - 1 ? true : false;
-    $: prevEnabled = !isFalsy(imageByteArray) && selectedIndex > 0 ? true : false;
+    $: nextAndPrevEnabled = !isFalsyArray(imageByteArray);
+    $: nextEnabled = nextAndPrevEnabled && selectedIndex < imageByteArray.length - 1 ? true : false;
+    $: prevEnabled = nextAndPrevEnabled && selectedIndex > 0 ? true : false;
 
     $: nextColClass = nextEnabled ? " grid-chevron-col " : " grid-chevron-col-disabled ";
     $: prevColClass = prevEnabled ? " grid-chevron-col " : " grid-chevron-col-disabled ";
@@ -124,28 +125,38 @@
         </div>
     </section>
    <section class="row mx-y image-display-row">
-       <section class={ CHEVRON_COL +  prevColClass} on:click|preventDefault={decrementIndex}>
-           <i class={prevChevronClass}></i>
-       </section>
+       {#if nextAndPrevEnabled}
+           <section class={ CHEVRON_COL +  prevColClass} on:click|preventDefault={decrementIndex}>
+               <i class={prevChevronClass}></i>
+           </section>
+       {/if}
         <section class="col-10 d-flex flex-row justify-content-center  align-items-center image-display-row">
             {#if  !isFalsy(selectedImage)}
                 <div class=" img-render-wrapper p-4 ">
                     <img  class="grid-image" src={selectedImage} alt="No image found." />
                 </div>
             {:else}
-                <i class="bi bi-file-image-fill card-icon text-secondary fa-10x img-not-found-icon"></i>
+                <div class="text-center">
+                    <i class=" bi bi-cloud-arrow-up card-icon opacity-75 text-success fa-10x img-not-found-icon opacity-50"/>
+                    <p>Tasty image image sadly not found ;)</p>
+                </div>
             {/if}
         </section>
-       <section class={CHEVRON_COL  +  nextColClass} on:click|preventDefault={incrementIndex}>
-           <i class={nextChevronClass} ></i>
-       </section>   </section>
-    <div class="row  d-flex flex-row  flex-nowrap py-3 img-tab-row border-top">
-        {#each imageByteArray as image, i}
-            <button class="img-tab btn btn-outline-success rounded border d-flex flex-row justify-content-center align-items-center m-1" on:click={() => {selectedIndex = i;}}>
-                {i + 1}
-            </button>
-        {/each}
-    </div>
+       {#if nextAndPrevEnabled}
+           <section class={CHEVRON_COL  +  nextColClass} on:click|preventDefault={incrementIndex}>
+               <i class={nextChevronClass} ></i>
+           </section>
+       {/if}
+   </section>
+    {#if nextAndPrevEnabled}
+        <div class="row  d-flex flex-row  flex-nowrap py-3 img-tab-row border-top">
+            {#each imageByteArray as image, i}
+                <button class="img-tab btn btn-outline-success rounded border d-flex flex-row justify-content-center align-items-center m-1" on:click={() => {selectedIndex = i;}}>
+                    {i + 1}
+                </button>
+            {/each}
+        </div>
+    {/if}
     <section class="row bg-white my-2">
         <slot name="slot-one">
         </slot>

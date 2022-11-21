@@ -8,7 +8,7 @@ import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions
 import com.svelteup.app.backend.profile.dtos.ContactDto;
 import com.svelteup.app.backend.profile.dtos.DeleteAccountDto;
 import com.svelteup.app.backend.profile.dtos.PasswordChangeDto;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,7 +43,7 @@ public interface IAccountController {
      */
     @PutMapping(value = ApplicationApi.POST_PHONE_NUMBER,consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    void putPhoneNumber(@AuthenticationPrincipal SvelteUpUser profile, @RequestBody SvelteUpUserAccountDto accountDto) throws Http401Exception, Http403Exception, Http500Exception;
+    void putPhoneNumber(@AuthenticationPrincipal SvelteUpUser profile, @RequestBody SvelteUpUserProfileDto accountDto) throws Http401Exception, Http403Exception, Http500Exception;
 
     /**
      *Deletes Account and sends a verification code text to the registered email.
@@ -93,7 +93,7 @@ public interface IAccountController {
      */
     @PutMapping(value = ApplicationApi.TWO_FACTOR_AUTH,consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    void putTwoFactorAuth(@AuthenticationPrincipal SvelteUpUser profile, @RequestBody SvelteUpUserAccountDto accountDto) throws Http401Exception, Http403Exception, Http500Exception;
+    void putTwoFactorAuth(@AuthenticationPrincipal SvelteUpUser profile, @RequestBody SvelteUpUserProfileDto accountDto) throws Http401Exception, Http403Exception, Http500Exception;
 
     /**
      *Updates email and sends a verification code text to the registered email.
@@ -105,7 +105,7 @@ public interface IAccountController {
      */
     @PutMapping(value = ApplicationApi.POST_EMAIL,consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    void putEmail(@AuthenticationPrincipal SvelteUpUser profile, @RequestBody SvelteUpUserAccountDto accountDto) throws Http401Exception, Http403Exception, Http500Exception, IOException, NotSupportedException;
+    void putEmail(@AuthenticationPrincipal SvelteUpUser profile, @RequestBody SvelteUpUserProfileDto accountDto) throws Http401Exception, Http403Exception, Http500Exception, IOException, NotSupportedException;
 
 
    // @GetMapping(value  = ApplicationApi.GET_EMAIL_VERIFY)
@@ -116,5 +116,5 @@ public interface IAccountController {
     void resendVerificationEmail(@AuthenticationPrincipal SvelteUpUser user) throws Http400Exception, Http500Exception, NotSupportedException;
     @PutMapping(value= ApplicationApi.PUT_ACCOUNT_EMAIL)
     @ResponseStatus(HttpStatus.OK)
-    void updateVerificationTokenAndResendEmail(@AuthenticationPrincipal SvelteUpUser user, @RequestBody SvelteUpUserAccountDto dto) throws NotSupportedException;
+    void updateVerificationTokenAndResendEmail(@AuthenticationPrincipal SvelteUpUser user, @RequestBody SvelteUpUserProfileDto dto) throws NotSupportedException;
 }

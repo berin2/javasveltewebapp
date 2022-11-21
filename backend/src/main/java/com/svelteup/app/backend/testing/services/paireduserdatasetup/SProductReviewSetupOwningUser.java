@@ -11,6 +11,7 @@ import com.svelteup.app.backend.productorder.models.ProductReviewScoreCard;
 import com.svelteup.app.backend.productorder.repositories.RProductOrder;
 import com.svelteup.app.backend.productorder.repositories.RProductReview;
 import com.svelteup.app.backend.productorder.repositories.RProductReviewScoreCard;
+import com.svelteup.app.backend.productorder.services.SProductOrder;
 import com.svelteup.app.backend.testing.dto.PairedOwningUserDataSetupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class SProductReviewSetupOwningUser extends APairedOwningUserDataSetup {
     @Autowired RProductOrder rProductOrder;
     @Autowired RProductReview rProductReview;
     @Autowired RProductReviewScoreCard rProductReviewScoreCard;
+    @Autowired SProductOrder sProductOrder;
 
     @Override
     public void setupEntity(PairedOwningUserDataSetupDto dto) throws NotSupportedException {
@@ -33,11 +35,16 @@ public class SProductReviewSetupOwningUser extends APairedOwningUserDataSetup {
         ProductReviewScoreCard reviewScoreCard = this.rProductReviewScoreCard.findByOwningUsername(secondaryOwningUsername);
         Integer orderQuantiy = null;
         Integer reviewStars   = null;
+
+
         for(Product productToReview:dto.chosenSecondaryOwningUser.productList)
         {
             orderQuantiy = dto.getRandomIntegerWithinRange();
             ProductOrder order = new ProductOrder(owningUsername,orderQuantiy * productToReview.getProductCost(),orderQuantiy, ApplicationNotificationEnums.ORDER_ACCEPTED, productToReview);
+
+
             order = rProductOrder.save(order);
+
 
             reviewStars = ThreadLocalRandom.current().nextInt(1,6);
             postDto = new PostProductReviewDto();
@@ -48,7 +55,7 @@ public class SProductReviewSetupOwningUser extends APairedOwningUserDataSetup {
 
             reviewScoreCard.updateReviewScoreCard(postDto);
             rProductReviewScoreCard.save(reviewScoreCard);
-            ProductReview review = new ProductReview(dto.chosenOwningUser.owningUser,postDto,order);
+            ProductReview review = new ProductReview(dto.chosenOwningUser.owningUser,postDto,order,productToReview);
             rProductReview.save(review);
         }
     }

@@ -38,6 +38,7 @@ class ApiService
     //FullyAuthURL
     static getProductPage(page:number) {return `${this.AUTH_FULLY_SETUP}/product/${page}`}
     static getProductUrl() {return `${this.AUTH_FULLY_SETUP}/product`;}
+    static getProducts(username:string) : string {return `${this.AUTH_FULLY_SETUP}/product/all/${username}`;}
     static getPaymentTokenUrl(){return `${this.AUTH_FULLY_SETUP}/clientoken`;}
     static getPrefPaymentTokenUrl(){return `${this.AUTH_FULLY_SETUP}/clientoken`}
 
@@ -56,6 +57,8 @@ class ApiService
 
     //social profile
     static getSocialProfileUrl():string{return `${this.AUTH_FULLY_SETUP}/socialprofile`}
+
+    //products
 
 
 }

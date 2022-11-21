@@ -1,6 +1,6 @@
 package com.svelteup.app.backend.aws.ses.events;
 
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.profile.models.SvelteUpUserProfile;
 import com.svelteup.app.backend.profile.services.SSvelteUpUserProfile;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class IdentityEstablishedEventListener implements
     @SneakyThrows
     @Override
     public void onApplicationEvent(IdentityEstablishedEvent event) {
-        SvelteUpUserAccountDto identityDto = event.userIdentityDataDto;
+        SvelteUpUserProfileDto identityDto = event.userIdentityDataDto;
         SvelteUpUserProfile userProfile = svelteUpUserProfile.findById(event.getOwningUsername());
 
     }

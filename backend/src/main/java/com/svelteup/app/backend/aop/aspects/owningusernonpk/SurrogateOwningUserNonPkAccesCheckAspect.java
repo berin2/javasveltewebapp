@@ -42,6 +42,7 @@ public class SurrogateOwningUserNonPkAccesCheckAspect extends AopBase {
         return owningUserNonPrimaryKeySurrogateEntity;
     }
 
+
     /**
      * Performs access check on OwningUserNonPrimaryKeySurrogateEntity before entity access.
      * @param joinPoin the JoinPoint which contains the neccessary

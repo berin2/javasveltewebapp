@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface RProduct extends RSurrogateJpaRepository<Product, UUID> {
     public Product findBySurrogateIdAndOwningUsername(UUID id, String username);
     public void deleteProductBySurrogateIdAndOwningUsername(UUID id, String username);
-    public List<Product> findAllByOwningUsername(String username);
+    public List<Product> findAllByOwningUsernameAndActiveTrue(String username);
 }

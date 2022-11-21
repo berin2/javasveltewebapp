@@ -1,10 +1,13 @@
 <script>
-    import {Route} from "svelte-navigator";
-    import RectanglePanelComponent from "../Components/ReusableComponents/ListPanels/RectanglePanelComponent.svelte";
-    import TestComponent from "../Components/Testing/TestComponent.svelte";
+   import {Route} from "svelte-navigator";
+
+   import ProfileLetterComponent
+      from "../Components/ReusableComponents/LayoutComponents/ImageComponentReusables/ProfileLetterComponent.svelte";
+   import CircularImage
+      from "../Components/ReusableComponents/LayoutComponents/ImageComponentReusables/CircularImage.svelte";
+   import EditProfile from "../Components/Profile/EditProfile.svelte";
 </script>
 
 <Route path="test">
-    <RectanglePanelComponent msg="this is a sample msg"/>
-    <TestComponent/>
+   <EditProfile/>
 </Route>

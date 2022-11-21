@@ -1,12 +1,12 @@
 <script lang="ts">
     import authenticationStore from "../../../Stores/AuthenticationStore";
-    import AppInitDto from "../../../Dto/auth/AppInitDto";
+    import ApplicationUser from "../../../Dto/auth/ApplicationUser";
     import {onMount} from "svelte";
     import {httpClient} from "../../../Stores/HttpClient";
     import {HttpRequest, POST} from "../../../Services/HttpClients/HttpClient";
 
 
-    let authUser:AppInitDto = $authenticationStore;
+    let authUser:ApplicationUser = $authenticationStore;
 
     export let msg:string = "";
     export let username = "";

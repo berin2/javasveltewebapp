@@ -253,7 +253,9 @@ public class SImageS3  extends SHttpExceptionThrower implements IUserLifeCycle<O
 
 
     public void delete(String authenticatedUser, List<Integer> deleteIndexes, Object identifier, Class entityClass) throws Http400Exception, Http403Exception, Http500Exception, NotSupportedException {
-        for(Integer imageIndex: deleteIndexes) {
+
+        if(this.profile.equals("dev"))
+            for(Integer imageIndex: deleteIndexes) {
             String objectPath = this.buildFilePathForMultipleOrSingularEntites(entityClass, authenticatedUser, imageIndex,identifier);
             if(s3Client.doesObjectExist(this.bucketName,objectPath))
                 s3Client.deleteObject(this.bucketName,objectPath);
@@ -311,11 +313,15 @@ public class SImageS3  extends SHttpExceptionThrower implements IUserLifeCycle<O
         String returnString = StreamUtils.copyToString(fileInputStream, Charset.defaultCharset());
         return returnString;
     }
-    public String getTestProfileImage()
-    {return null;}
+    public String getTestProfileImage() throws IOException
+    {
+        Resource springFile = new ClassPathResource("/static/images/profileImg.txt");
+        String byteString = this.convertResourceToString(springFile);
+        return byteString;
+    }
 
     public String getTestProductImage() throws IOException {
-        Resource springFile = new ClassPathResource("/static/images/profileImg.txt");
+        Resource springFile = new ClassPathResource("/static/images/productImage.txt");
         String byteString = this.convertResourceToString(springFile);
         return byteString;
     }

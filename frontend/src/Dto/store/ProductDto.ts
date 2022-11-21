@@ -29,6 +29,8 @@ class ProductDto  extends BaseDto implements ToApiDto
         return this;
     }
 
+
+
     public static emptyDto():object
     {
         let returnDto: ProductDto = new ProductDto({

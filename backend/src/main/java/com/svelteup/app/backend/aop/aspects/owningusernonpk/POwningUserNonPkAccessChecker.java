@@ -15,6 +15,12 @@ public class POwningUserNonPkAccessChecker implements OwningUserNonPrimaryKeyPer
     }
 
     @Override
+    public OwningUserNonPrimaryKeySurrogateEntity afterReturningSecondaryOwningUserNonPrimaryKeyPermissionCheck(String authenticatedUser, OwningUserNonPrimaryKeySurrogateEntity entity) throws Http403Exception, NotSupportedException {
+        return entity;
+    }
+
+
+    @Override
     public OwningUserNonPrimaryKeySurrogateEntity beforeOwningUserNonPrimaryKeyPermissionCheck(String authenticatedUser, OwningUserNonPrimaryKeySurrogateEntity entity) throws Http403Exception, NotSupportedException {
         return entity;
     }

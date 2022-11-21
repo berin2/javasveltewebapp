@@ -3,7 +3,7 @@ package com.svelteup.app.backend.userlifecycle.controllers;
 import com.svelteup.app.backend.dtostores.AppInitDto;
 import com.svelteup.app.backend.noauthrequired.dtos.UserRegisterDto;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.userlifecycle.dtos.EmailVerifyInitializerDto;
 import com.svelteup.app.backend.userlifecycle.dtos.EstablishCustomerIdentityDto;
 import com.svelteup.app.backend.userlifecycle.services.NavDtoService;
@@ -30,16 +30,16 @@ public class InitializerControllerImp implements IInitializerController {
     }
 
     @Override
-    public ResponseEntity<AppInitDto> postUserIdentity(SvelteUpUser user, SvelteUpUserAccountDto dto) {
+    public ResponseEntity<AppInitDto> postUserIdentity(SvelteUpUser user, SvelteUpUserProfileDto dto) {
         EstablishCustomerIdentityDto establishDto = new EstablishCustomerIdentityDto();
         establishDto.user = user;
-        establishDto.svelteUpUserAccountDto = dto;
+        establishDto.svelteUpUserProfileDto = dto;
         identityInitializedInitializerChain.doChain(null,establishDto);
         return ResponseEntity.ok(navDtoService.buildNavStoreDtoWithoutNotificationsAndWithoutImages(establishDto.user));
     }
 
     @Override
-    public void postPhoneNumberVerify(SvelteUpUser user, SvelteUpUserAccountDto dto) {
+    public void postPhoneNumberVerify(SvelteUpUser user, SvelteUpUserProfileDto dto) {
 
     }
 

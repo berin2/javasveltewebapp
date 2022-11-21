@@ -51,6 +51,7 @@ public class SSvelteUpUserProfileSetupOwningUser extends AOwningUserDataSetup
         profile.setPhoneNumberPhoneNumber(ThreadLocalRandom.current().nextInt(1000000,9999999));
         profile.setOwningUsername(dto.owningUser.getUsername());
 
+        profile.setProductReviewScoreCard(dto.owningUserProductReviewScoreCard);
         profile = svelteUpUserProfileRepository.save(profile);
         List<String> fileStringList = new ArrayList<>();
         fileStringList.add(StreamUtils.copyToString(imageResource.getInputStream(), StandardCharsets.UTF_8));

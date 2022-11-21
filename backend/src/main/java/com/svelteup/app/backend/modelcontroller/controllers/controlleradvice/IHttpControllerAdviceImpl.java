@@ -34,6 +34,11 @@ public class IHttpControllerAdviceImpl implements IHttpControllerAdvice {
     }
 
     @Override
+    public void defaultExceptionResponse(Exception  exception) {
+        System.out.println(exception.getMessage().toLowerCase(Locale.ROOT));
+    }
+
+    @Override
     public void respondToBindException() {
 
     }

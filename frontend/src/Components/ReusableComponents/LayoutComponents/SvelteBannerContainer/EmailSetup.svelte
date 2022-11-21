@@ -6,7 +6,7 @@
     import {httpClient} from "../../../../Stores/HttpClient";
     import {HttpClient, HttpRequest, PUT} from "../../../../Services/HttpClients/HttpClient";
     import ApiService from "../../../../Services/ApiService/ApiService";
-    import SvelteUpUserAccountDto from "../../../../Dto/profile/SvelteUpUserAccountDto";
+    import SvelteUpUserProfileDto from "../../../../Dto/profile/SvelteUpUserProfileDto";
     import authenticationStore from "../../../../Stores/AuthenticationStore";
     let client: HttpClient  = $httpClient;
 
@@ -29,7 +29,7 @@
     function updateEmail() {
         if (matches)
         {
-            let dto: SvelteUpUserAccountDto = new SvelteUpUserAccountDto();
+            let dto: SvelteUpUserProfileDto = new SvelteUpUserProfileDto();
             dto.buildEmailDto(email);
             let req: HttpRequest = new HttpRequest(PUT,ApiService.getEmailUrl(),true,{"content-type":"application/json"},dto);
             client.httpRequest(req,() => {email="";confirmEmail="";updateEmailSuccess=true;},()=>{updateEmailSuccess=false;})

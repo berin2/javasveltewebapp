@@ -1,6 +1,7 @@
 package com.svelteup.app.backend.modelcontroller.services.services;
 
-import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheck;
+import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheckAOPTarget;
+import com.svelteup.app.backend.aop.aspects.paireduser.PPairedOwningUserNonPkAccessChecker;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http400Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http401Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http403Exception;
@@ -13,7 +14,6 @@ import com.svelteup.app.backend.modelcontroller.repositories.RProduct;
 import com.svelteup.app.backend.modelcontroller.repositories.RProductQuestion;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.HttpUuidService;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.SSurrogateEntity;
-import com.svelteup.app.backend.utils.exceptionutils.SHttpExceptionThrower;
 import lombok.EqualsAndHashCode;
 
 import org.springframework.data.domain.Page;
@@ -31,19 +31,20 @@ import java.util.UUID;
 @Service
 @EqualsAndHashCode(callSuper = true)
 public class SProductQuestion extends SSurrogateEntity<Long, ProductQuestion>
-        implements HttpUuidService<PutProductQuestionDto, PostProductQuestionDto>,
-        OwningUserPairedNonPkEntityAccessCheck<ProductQuestion>
+        implements HttpUuidService<PutProductQuestionDto, PostProductQuestionDto>
 {
     protected RProductQuestion rProductQuestion;
     protected SSurrogateEntity<Long,Product> sProduct;
     protected Sort productQuestionSort;
     protected Pageable productQuestionPageable;
+    protected  PPairedOwningUserNonPkAccessChecker accessChecker;
     protected final Integer PAGE_SIZE = 5;
 
-    public SProductQuestion(RProductQuestion surrogateJpaRepository, RProduct rProduct) {
+    public SProductQuestion(RProductQuestion surrogateJpaRepository, PPairedOwningUserNonPkAccessChecker accessChecker) {
         super(surrogateJpaRepository);
         this.rProductQuestion =  surrogateJpaRepository;
         this.productQuestionSort = Sort.by("pageRequestDate").descending();
+        this.accessChecker = accessChecker;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class SProductQuestion extends SSurrogateEntity<Long, ProductQuestion>
     public ResponseEntity<List<PutProductQuestionDto>> getPage(Integer pageIndex, UUID surrogateId)
     {
         Pageable  pageableRequest = PageRequest.of(PAGE_SIZE,pageIndex,productQuestionSort);
-        Page<ProductQuestion> productQuestionPage = this.rProductQuestion.findProductQuestionsByOwningProduct_SurrogateId(pageableRequest,surrogateId);
+        Page<ProductQuestion> productQuestionPage = this.rProductQuestion.findProductQuestionsByOwningProductSurrogateId(pageableRequest,surrogateId);
         List<PutProductQuestionDto> productQuestionDtoList = new ArrayList<>();
 
         for(ProductQuestion productQuestion:productQuestionPage)
@@ -72,7 +73,8 @@ public class SProductQuestion extends SSurrogateEntity<Long, ProductQuestion>
 
     @Override
     public void put(String authenticated_user, PutProductQuestionDto update_DTO) throws Http400Exception, Http401Exception, Http403Exception, Http405Exception, NotSupportedException {
-        ProductQuestion questionToUpdate = this.afterReturningIsOwningUserOrSecondaryUserCheck(authenticated_user,update_DTO.productQuestionId);
+        ProductQuestion questionToUpdate = this.findBySurrogateId(update_DTO.productQuestionId) ;
+        this.accessChecker.afterReturningSecondaryOwningUserPairedNonPrimaryKeyPermissionCheck(authenticated_user,questionToUpdate);
 
         if(questionToUpdate.getOwningUsername().equals(authenticated_user))
             questionToUpdate.setProductQuestionAnswer(update_DTO.productQuestionAnswer);
@@ -82,55 +84,8 @@ public class SProductQuestion extends SSurrogateEntity<Long, ProductQuestion>
 
     @Override
     public void delete(String username, UUID secondary_id) throws Http400Exception, Http401Exception, Http405Exception, NotSupportedException {
-        ProductQuestion questionToDelete = this.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(username,secondary_id);
+        ProductQuestion questionToDelete = this.findBySurrogateId(secondary_id);
+        this.accessChecker.afterReturningSecondaryOwningUserPairedNonPrimaryKeyPermissionCheck(username, questionToDelete);
         this.rProductQuestion.delete(questionToDelete);
-    }
-
-    @Override
-    public ProductQuestion afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, UUID entitySurrogateId) throws Http403Exception, NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    /**
-     * afterReturningIsOwningUserCheck is used to identify if the user is the owning or secondary owning user.
-     *
-     * @param authenticatedUser The user to check against the entity.
-     * @param entityId          The entity passed to the calling method.
-     * @return a true Boolean indicating that the authenticatedUser is the owningUser, or false if the user
-     * is the secondary user. Before calling this method, it's important to ensure the user is either the owningUser
-     * or the secondaryOwningUser.
-     */
-    @Override
-    public ProductQuestion afterReturningIsOwningUserOrSecondaryUserCheck(String authenticatedUser, UUID entityId) throws NotSupportedException {
-        return this.findBySurrogateId(entityId);
-    }
-
-    @Override
-    public ProductQuestion beforeOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, ProductQuestion entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public ProductQuestion beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(String authenticatedUser, ProductQuestion entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public ProductQuestion beforeOwningUserPairedNonPrimaryKeyIsSecondaryOwningUserCheck(String authenticatedUser, ProductQuestion entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    /**
-     * beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck ensures a user is neither the primary or secondary owning user.
-     *
-     * @param authenticatedUser the user to permission check.
-     * @param entity            the user to check permissions for.
-     * @return entity the entity passed as a parameter.
-     * @throws Http403Exception      if the user is not listed as secondaryUser and primaryOwningUser.
-     * @throws NotSupportedException if the method call is not supported in implementing service
-     */
-    @Override
-    public ProductQuestion beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck(String authenticatedUser, ProductQuestion entity) throws Http403Exception, NotSupportedException {
-        return entity;
     }
 }

@@ -155,7 +155,6 @@ a {
 }
 
 .app-container {
-	box-sizing: border-box;
 	margin-top: 130px;
 	width: 100vw !important;
 }
@@ -180,6 +179,20 @@ a {
 {
 	min-height: 50vh;
 	height: auto;
+}
+
+.hover {
+
+}
+
+.hover:hover{
+	background-color: gray !important;
+	color: white;
+	cursor: pointer;
+}
+.hover:hover > *
+{
+	color: white;
 }
 
 @media (max-width: 772px) {

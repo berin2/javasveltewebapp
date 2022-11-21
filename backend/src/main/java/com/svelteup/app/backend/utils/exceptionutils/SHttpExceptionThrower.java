@@ -2,6 +2,7 @@ package com.svelteup.app.backend.utils.exceptionutils;
 
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.*;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @NoArgsConstructor
@@ -13,6 +14,8 @@ public abstract class SHttpExceptionThrower {
     public static final String UNSUPPORTED_OPERATION =  "Unsupported operation called in clasname %s method name %s by username %s";
     public static final String BAD_REQUEST_OPERATION = "Method %s in class %s requested to perform operation for user %s with object identifier %s but the request failed.";
     public static final String RESOURCE_NOT_FOUND = "Method %s in class %s requested to perform operation for user %s with object identifier %s but the object identifier could not  be found.";
+    @Value("spring.profiles.active")
+    protected String profile;
     public void throwHttp403(String methodName, String className, String authenticatedUser, String appendedMessage) throws Http403Exception
     {
         throw new Http403Exception(String.format(FORBIDDEN_OPERATION_ERR,authenticatedUser,methodName,className,"NOT APPLICABLE", appendedMessage));

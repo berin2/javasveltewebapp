@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Aspect()
 @Component()
-public class SurrogateOwningSecondaryOwnerUserAOPTargetAspects extends AopBase {
+public class SurrogateOwningSecondaryOwnerUserAccessCheckAspect extends AopBase {
 
     public static final String NO_OBJECT_ACCESS_PERMISSION = "User %s attempted to access object with surrogateID %s but was not the owning user of said object.";
     public static final String NULL_AUTHENTICATED_USERNAME = "An authenticated user whose username was null attempted to acces object with surrogateId %s.";
@@ -81,6 +81,20 @@ public class SurrogateOwningSecondaryOwnerUserAOPTargetAspects extends AopBase {
 
         if(!pairedEntity.getOwningUsername().equals(username) && !pairedEntity.getSecondaryOwningUsername().equals(username))
             this.throwHttp403("afterReturningIsOwningUserOrSecondaryUserCheck",this.getClass().toString(),username,owningUserPairedPkEntity.getSurrogateId());
+    }
+
+    @AfterReturning(
+            returning = "owningUserPairedEntity",
+            pointcut = "execution(* afterReturningSecondaryOwningUserNonPrimaryKeyPermissionCheck(..))"
+    )
+    public void afterReturningIsSecondaryUserCheck(JoinPoint joinPoin, OwningUserNonPrimaryKeySurrogateEntity owningUserPairedEntity)
+    {
+        this.objectArgsCheck(joinPoin,2,"owningUserPkAccessCheck",this.getClass().toString());
+        String username = joinPoin.getArgs()[0].toString();
+        PairedUserNonPrimaryKeyEntity pairedEntity =(PairedUserNonPrimaryKeyEntity) joinPoin.getArgs()[1];
+
+        if(!pairedEntity.getSecondaryOwningUsername().equals(username))
+            this.throwHttp403("afterReturningIsOwningUserOrSecondaryUserCheck",this.getClass().toString(),username,owningUserPairedEntity.getSurrogateId());
     }
 
     public void accessCheck(JoinPoint joinPoin, OwningUserNonPrimaryKeySurrogateEntity owningUserNonPKEntity) throws Http403Exception

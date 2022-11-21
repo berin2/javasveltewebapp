@@ -1,6 +1,6 @@
 package com.svelteup.app.backend.productorder.services;
 
-import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheck;
+import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheckAOPTarget;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http403Exception;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.SSurrogateEntity;
 import com.svelteup.app.backend.notificationmessage.events.NotificationEvent;
@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Service
 @Data @EqualsAndHashCode(callSuper = false)
-public class SProductOrderStatus extends SSurrogateEntity<Long,ProductOrder> implements ApplicationEventPublisherAware, OwningUserPairedNonPkEntityAccessCheck<ProductOrder> {
+public class SProductOrderStatus extends SSurrogateEntity<Long,ProductOrder> implements ApplicationEventPublisherAware {
     private static final String STATUS_ERROR_STRING = "Buyer user %s does not have permission to change from status %d to status %d";
     private static final String USER_NOT_BUYER_OR_SELLER_ERROR = "User is not %s is not a seller or buyer for the product order with surrogate id %s";
     private static final String ORDER_STATUS_NOT_SUPPORTED = "Order status change to enum name %s is not supported by the current application.";
@@ -105,53 +105,5 @@ public class SProductOrderStatus extends SSurrogateEntity<Long,ProductOrder> imp
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
-    }
-
-    @Override
-    public ProductOrder afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, UUID entitySurrogateId) throws Http403Exception, NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    /**
-     * afterReturningIsOwningUserCheck is used to identify if the user is the owning or secondary owning user.
-     *
-     * @param authenticatedUser The user to check against the entity.
-     * @param entitySurrogateId The entity  surrogateId
-     * @return a true Boolean indicating that the authenticatedUser is the owningUser, or false if the user
-     * is the secondary user. Before calling this method, it's important to ensure the user is either the owningUser
-     * or the secondaryOwningUser.
-     */
-    @Override
-    public ProductOrder afterReturningIsOwningUserOrSecondaryUserCheck(String authenticatedUser, UUID entitySurrogateId) throws NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyIsSecondaryOwningUserCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    /**
-     * beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck ensures a user is neither the primary or secondary owning user.
-     *
-     * @param authenticatedUser the user to permission check.
-     * @param entity            the user to check permissions for.
-     * @return entity the entity passed as a parameter.
-     * @throws Http403Exception      if the user is not listed as secondaryUser and primaryOwningUser.
-     * @throws NotSupportedException if the method call is not supported in implementing service
-     */
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
     }
 }

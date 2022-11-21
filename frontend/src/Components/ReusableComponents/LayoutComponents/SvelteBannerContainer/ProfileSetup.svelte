@@ -1,5 +1,5 @@
 <script lang="ts">
-    import SvelteUpUserAccountDto from "../../../../Dto/profile/SvelteUpUserAccountDto";
+    import SvelteUpUserProfileDto from "../../../../Dto/profile/SvelteUpUserProfileDto";
     import BaseButton from "../../Buttons/BaseButton.svelte";
     import TextInput from "../../FormControls/TextInput.svelte";
     import NumberInput from "../../FormControls/NumberInput.svelte";
@@ -11,14 +11,14 @@
     import {isFalsy} from "../../../../Validators/IsFalsyObjectValidator";
     import CheckInput from "../../FormControls/CheckInput.svelte";
     import authenticationStore from "../../../../Stores/AuthenticationStore";
-    import AppInitDto from "../../../../Dto/auth/AppInitDto";
+    import ApplicationUser from "../../../../Dto/auth/ApplicationUser";
     import ApiService from "../../../../Services/ApiService/ApiService";
     import UserProfileDto from "../../../../Dto/profile/UserProfileDto";
 
-    let user:AppInitDto = $authenticationStore;
+    let user:ApplicationUser = $authenticationStore;
     let client: HttpClient = $httpClient;
 
-    let profileDto: SvelteUpUserAccountDto = new SvelteUpUserAccountDto();
+    let profileDto: SvelteUpUserProfileDto = new SvelteUpUserProfileDto();
     let placeholder: any = "";
 
     let firstName: string = "";
@@ -49,8 +49,8 @@
     const ZIP_INVALID: string ="You must supply a five digit zipcode.";
 
 
-    function buildDto(): SvelteUpUserAccountDto {
-        let identityDto:SvelteUpUserAccountDto = new SvelteUpUserAccountDto();
+    function buildDto(): SvelteUpUserProfileDto {
+        let identityDto:SvelteUpUserProfileDto = new SvelteUpUserProfileDto();
 
         identityDto.firstName = firstName;
         identityDto.lastName = lastName;
@@ -65,7 +65,7 @@
         return identityDto;
     }
 
-    function success(resp: AppInitDto) :void
+    function success(resp: ApplicationUser) :void
     {
         user.isIdentityVerified = resp.isIdentityVerified;
         $authenticationStore = {...user};

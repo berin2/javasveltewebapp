@@ -1,6 +1,7 @@
 package com.svelteup.app.backend.modelcontroller.services.abstractions;
 
 import com.svelteup.app.backend.aop.aspects.owningusernonpk.POwningUserNonPkAccessChecker;
+import com.svelteup.app.backend.aop.aspects.paireduser.PPairedOwningUserNonPkAccessChecker;
 import com.svelteup.app.backend.modelcontroller.models.usermodels.OwningUserNonPrimaryKeySurrogateEntity;
 import com.svelteup.app.backend.modelcontroller.repositories.RSurrogateJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class SSurrogateEntityOwningUserNonPk<Key,Entity extends OwningUserNonPri
 {
 
     protected POwningUserNonPkAccessChecker pOwningUserNonPkAccessChecker;
+    @Autowired
+    protected PPairedOwningUserNonPkAccessChecker pPairedOwningUserNonPkAccessChecker;
 
     public SSurrogateEntityOwningUserNonPk(RSurrogateJpaRepository<Entity, Key> surrogateJpaRepository) {
         super(surrogateJpaRepository);
@@ -38,6 +41,21 @@ public class SSurrogateEntityOwningUserNonPk<Key,Entity extends OwningUserNonPri
         this.pOwningUserNonPkAccessChecker.afterReturningOwningUserNonPrimaryKeyPermissionCheck(authenticatedUser,owningUserPkEntity);
         return owningUserPkEntity;
     }
+
+    public Entity findBySurrogateIdOwningUserCheck(String authenticatedUser,UUID surrogateId) throws NotSupportedException
+    {
+        Entity owningUserPkEntity = super.findBySurrogateId(surrogateId);
+        this.pOwningUserNonPkAccessChecker.afterReturningOwningUserNonPrimaryKeyPermissionCheck(authenticatedUser,owningUserPkEntity);
+        return owningUserPkEntity;
+    }
+
+    public Entity findBySurrogateIdSecondaryOwningUserCheck(String authenticatedUser,UUID surrogateId) throws NotSupportedException
+    {
+        Entity owningUserPkEntity = super.findBySurrogateId(surrogateId);
+        this.pOwningUserNonPkAccessChecker.afterReturningSecondaryOwningUserNonPrimaryKeyPermissionCheck(authenticatedUser,owningUserPkEntity);
+        return owningUserPkEntity;
+    }
+
 
     public void accessCheck(String authenticatedUser, Entity entity) throws NotSupportedException
     {

@@ -45,9 +45,9 @@ public class SProductReview extends SSurrogateEntityOwningUserNonPk<Long,Product
         SvelteUpUser authenticatedUserObject = (SvelteUpUser) SecurityContextHolder.getContext().getAuthentication();
 
         //ensure user is buyer
-        productOrderService.beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(authenticatedUser, discoveredOrder);
+        this.pPairedOwningUserNonPkAccessChecker.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(authenticatedUser,discoveredOrder);
 
-        ProductReview usersSubmittedProductReview = new ProductReview(authenticatedUserObject, create_DTO, discoveredOrder);
+        ProductReview usersSubmittedProductReview = new ProductReview(authenticatedUserObject, create_DTO, discoveredOrder,discoveredOrder.getProductOrderProduct());
         this.productReviewRepository.save(usersSubmittedProductReview);
     }
 
@@ -58,7 +58,7 @@ public class SProductReview extends SSurrogateEntityOwningUserNonPk<Long,Product
     }
 
     public List<PutProductReviewDto> getAllForProduct(UUID surrogateProductId) {
-        List<ProductReview> productReviewList = this.productReviewRepository.findProductReviewsByOwningProductOrder_ProductOrderProduct_SurrogateId(surrogateProductId);
+        List<ProductReview> productReviewList = this.productReviewRepository.findProductReviewsByProductOrder_SurrogateProductId(surrogateProductId);
         List<PutProductReviewDto> productReviewDtoList = new ArrayList<>();
         PutProductReviewDto reviewDto = null;
         for (ProductReview reviewIterator : productReviewList) {

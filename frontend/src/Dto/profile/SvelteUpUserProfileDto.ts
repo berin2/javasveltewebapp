@@ -1,4 +1,6 @@
-class SvelteUpUserAccountDto
+import type {ProductReviewScoreCardDto} from "./ProductReviewScoreCardDto";
+
+class SvelteUpUserProfileDto
 {
     public  phoneNumberAreaCode:number|null;
     public  phoneNumberPhoneNumber:number|null
@@ -14,10 +16,10 @@ class SvelteUpUserAccountDto
     public zipCode:number|null;
 
     public aboutMe:string|null;
-    public image:object|null;
+    public image:string|null;
+    public productReviewScoreCard: ProductReviewScoreCardDto;
 
-    public constructor() {
-    }
+    public constructor() {}
 
     public buildEmailDto(email:string)
     {
@@ -35,10 +37,13 @@ class SvelteUpUserAccountDto
         this.firstName  = firstName;
         this.lastName = lastName;
         this.phoneNumberAreaCode = areaCode;
+        this.phoneNumberPhoneNumber = phoneNumberNumber;
         this.addressLineOne  = addressLine;
         this.userProfileState  = userProfileState;
         this.userProfileCountry  = userProfileCountry;
     }
+
+
 }
 
-export default SvelteUpUserAccountDto;
+export default SvelteUpUserProfileDto;

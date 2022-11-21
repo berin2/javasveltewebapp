@@ -1,6 +1,7 @@
 package com.svelteup.app.backend.productorder.services;
 
-import com.svelteup.app.backend.aop.aspects.paireduser.OwningUserPairedNonPkEntityAccessCheck;
+import com.svelteup.app.backend.aop.aspects.owningusernonpk.POwningUserNonPkAccessChecker;
+import com.svelteup.app.backend.aop.aspects.paireduser.PPairedOwningUserNonPkAccessChecker;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http400Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http401Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http403Exception;
@@ -19,8 +20,10 @@ import com.svelteup.app.backend.modelcontroller.services.abstractions.SSurrogate
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +36,7 @@ import java.util.UUID;
 @Data @EqualsAndHashCode(callSuper = false)
 public class SProductOrder extends SSurrogateEntity<Long, ProductOrder>
         implements HttpUuidService<PutProductOrderStatusDto,PostProductOrderDto>,
-                   ApplicationEventPublisherAware, OwningUserPairedNonPkEntityAccessCheck<ProductOrder>
+                   ApplicationEventPublisherAware
 {
     private static final  String UNSUPPORTED_OPERATION ="% requested to invoke method %s which is not supported in " + SProductOrder.class.toString() + " for Object with id: %s .";
     private static final  String UNSUPPORTED_BUYER_AND_SELLER_OPERATION = "%s requested to create an order but is both the buyer and seller of said Product.";
@@ -41,13 +44,22 @@ public class SProductOrder extends SSurrogateEntity<Long, ProductOrder>
     private SProduct productService;
     private RProductOrder productOrderRepository;
     private ApplicationEventPublisher eventPublisher;
+    protected POwningUserNonPkAccessChecker pOwningUserNonPkAccessChecker;
+    protected PPairedOwningUserNonPkAccessChecker pPairedOwningUserNonPkAccessChecker;
 
-    public SProductOrder(RProductOrder productOrderRepository, SProductOrderStatus productOrderStatusService, SProduct productService)
+
+    public SProductOrder(RProductOrder productOrderRepository, SProductOrderStatus productOrderStatusService,POwningUserNonPkAccessChecker accessChecker)
     {
         super(productOrderRepository);
         this.productOrderStatusService = productOrderStatusService;
-        this.productService = productService;
         this.productOrderRepository = productOrderRepository;
+        this.pOwningUserNonPkAccessChecker = accessChecker;
+    }
+
+    @Autowired
+    public void setProductService(SProduct productService)
+    {
+        this.productService = productService;
     }
 
     private void checkIsBuyerAndSeller(String authenticatedBuyerUser, Product orderedProduct) throws Http403Exception
@@ -89,7 +101,7 @@ public class SProductOrder extends SSurrogateEntity<Long, ProductOrder>
 
         for(ProductOrder order : productOrderList)
         {
-            this.beforeOwningUserPairedNonPrimaryKeyPermissionCheck(authenticatedUser,order);
+            this.pOwningUserNonPkAccessChecker.afterReturningOwningUserNonPrimaryKeyPermissionCheck(authenticatedUser,order);
             iteratorDto = new PutProductOrderDto(order);
             productOrderDtoList.add(iteratorDto);
         }
@@ -121,57 +133,10 @@ public class SProductOrder extends SSurrogateEntity<Long, ProductOrder>
         throw new UnsupportedOperationException(String.format(UNSUPPORTED_OPERATION, username, "DELETE", secondary_id.toString()));
     }
 
+
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }
 
-    @Override
-    public ProductOrder afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, UUID entitySurrogateId) throws Http403Exception, NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-    /**
-     * afterReturningIsOwningUserCheck is used to identify if the user is the owning or secondary owning user.
-     *
-     * @param authenticatedUser The user to check against the entity.
-     * @param entitySurrogateId The entity  surrogateId
-     * @return a true Boolean indicating that the authenticatedUser is the owningUser, or false if the user
-     * is the secondary user. Before calling this method, it's important to ensure the user is either the owningUser
-     * or the secondaryOwningUser.
-     */
-    @Override
-    public ProductOrder afterReturningIsOwningUserOrSecondaryUserCheck(String authenticatedUser, UUID entitySurrogateId) throws NotSupportedException {
-        return this.findBySurrogateId(entitySurrogateId);
-    }
-
-
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyPermissionCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyIsSecondaryOwningUserCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
-
-    /**
-     * beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck ensures a user is neither the primary or secondary owning user.
-     *
-     * @param authenticatedUser the user to permission check.
-     * @param entity            the user to check permissions for.
-     * @return entity the entity passed as a parameter.
-     * @throws Http403Exception      if the user is not listed as secondaryUser and primaryOwningUser.
-     * @throws NotSupportedException if the method call is not supported in implementing service
-     */
-    @Override
-    public ProductOrder beforeOwningUserPairedNonPrimaryKeyIsNotPrimaryAndSecondaryOwningUserCheck(String authenticatedUser, ProductOrder entity) throws Http403Exception, NotSupportedException {
-        return entity;
-    }
 }

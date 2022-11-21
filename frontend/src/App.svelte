@@ -14,41 +14,39 @@
     import LoggedInRoutes from "./Routes/LoggedInRoutes.svelte";
     import LoggedOutRoutes from "./Routes/LoggedOutRoutes.svelte";
     import ApiService from "./Services/ApiService/ApiService";
-    import PoppPractice from "./Components/ReusableComponents/LayoutComponents/PoppPractice.svelte";
-    import AppInitDto from "./Dto/auth/AppInitDto";
-    import ObjectCopyService from "./Services/Utils/ObjectCopyService";
-    import ProductCard from "./Components/Store/ProductCard.svelte";
+    import ApplicationUser from "./Dto/auth/ApplicationUser";
+
     import {ProductDto} from "./Dto/store/ProductDto";
-    import ImageService from "./Services/Utils/ImageService";
-    import ImageGrid from "./Components/ReusableComponents/LayoutComponents/ImageGrid/ImageGrid.svelte";
     import TestRouteds from "./Routes/TestRouteds.svelte";
     import heartBeatStore from "./Components/HeartBeat/store/HeartBeatStore";
     import StoreService from "./Stores/StoreService";
+    import {httpClient} from "./Stores/HttpClient";
 
 
     let arr: string [] = ["hi", "hello", "hey"];
-    let testClient: HttpClient = null;
+    let client: HttpClient = $httpClient;
     let page_size: number = 2;
 
-    let user: AppInitDto = $authenticationStore;
+    let user: ApplicationUser = $authenticationStore;
     let productDto: ProductDto = null;
 
-    function onMountAuthSuccess(navDto: AppInitDto): void {
+    function onMountAuthSuccess(navDto: ApplicationUser): void {
 
-        let authUser: AppInitDto = new AppInitDto();
-
+        let authUser: ApplicationUser = new ApplicationUser();
         authUser.updateSelf(navDto);
+        authenticationStore.set(authUser);
+        $authenticationStore = {...$authenticationStore};
 
-        $authenticationStore = authUser;
-        $authenticationStore = $authenticationStore;
 
+        //@ts-ignore
         $heartBeatStore.updateSelf(authUser);
         $heartBeatStore = $heartBeatStore;
 
     }
 
     function onMountAuthFail(reason: any): void {
-        $authenticationStore = new AppInitDto();
+        authenticationStore.set(new ApplicationUser());
+        $authenticationStore = $authenticationStore;
     }
 
 
@@ -56,8 +54,7 @@
     onMount(() => {
         StoreService.resetStore();
         let req: HttpRequest = new HttpRequest("GET", ApiService.getAuthOnMountUrl(), true);
-        testClient = new HttpClient("http://localhost:10000");
-        testClient.dispatchRequest(req, onMountAuthSuccess, onMountAuthFail,(arg:object) => arg);
+        client.dispatchRequest(req, onMountAuthSuccess, onMountAuthFail,(arg:object) => arg);
     })
 
     onDestroy(() => StoreService.resetStore());
@@ -102,12 +99,15 @@
 <Router>
     <AppBar/>
     <NotFoundRoutes/>
-    <TestRouteds/>
-    {#if $authenticationStore.authenticated === true}
-        <LoggedInRoutes/>
-    {:else}
-        <LoggedOutRoutes/>
-    {/if}
+    <section class="app-container">
+        <TestRouteds/>
+        {#if $authenticationStore.authenticated === true}
+            <LoggedInRoutes/>
+        {:else}
+            <LoggedOutRoutes/>
+        {/if}
+    </section>
+
 
 </Router>
 

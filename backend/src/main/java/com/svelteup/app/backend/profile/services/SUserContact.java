@@ -1,6 +1,6 @@
 package com.svelteup.app.backend.profile.services;
 
-import com.svelteup.app.backend.aop.aspects.paireduser.SSurrogateOwningUserSecondaryOwningUserChecker;
+import com.svelteup.app.backend.aop.aspects.paireduser.PPairedOwningUserNonPkAccessChecker;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http400Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http401Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http403Exception;
@@ -12,7 +12,6 @@ import com.svelteup.app.backend.profile.models.SvelteUpUserProfile;
 import com.svelteup.app.backend.profile.repositories.RBlockedContact;
 import com.svelteup.app.backend.profile.repositories.RContact;
 import com.svelteup.app.backend.utils.exceptionutils.SHttpExceptionThrower;
-import jdk.nashorn.internal.ir.Block;
 import org.springframework.stereotype.Service;
 import javax.transaction.NotSupportedException;
 import java.util.ArrayList;
@@ -25,9 +24,9 @@ public class SUserContact extends SHttpExceptionThrower {
     protected final SSvelteUpUserProfile svelteUpUserProfileService;
     protected final RContact rContact;
     protected final RBlockedContact rBlockedContact;
-    protected final SSurrogateOwningUserSecondaryOwningUserChecker accessChecker;
+    protected final PPairedOwningUserNonPkAccessChecker accessChecker;
 
-    public SUserContact(SSvelteUpUserProfile svelteUpUserProfileService, RContact rContact, RBlockedContact rBlockedContact, SSurrogateOwningUserSecondaryOwningUserChecker accessChecker) {
+    public SUserContact(SSvelteUpUserProfile svelteUpUserProfileService, RContact rContact, RBlockedContact rBlockedContact, PPairedOwningUserNonPkAccessChecker accessChecker) {
         this.svelteUpUserProfileService = svelteUpUserProfileService;
         this.rContact = rContact;
         this.rBlockedContact = rBlockedContact;
@@ -46,7 +45,7 @@ public class SUserContact extends SHttpExceptionThrower {
         ContactDto returnIterator = null;
         for(Contact contact: discoveredContacts)
         {
-            this.accessChecker.beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(authenticatedUser,contact);
+            this.accessChecker.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(authenticatedUser,contact);
             returnIterator = contact.toGetDto();
             returnContactList.add(returnIterator);
         }
@@ -61,7 +60,7 @@ public class SUserContact extends SHttpExceptionThrower {
 
         for(BlockedContact contact: discoveredContacts)
         {
-            this.accessChecker.beforeOwningUserPairedNonPrimaryKeyIsOwningUserCheck(authenticatedUser,contact);
+            this.accessChecker.afterReturningOwningUserPairedNonPrimaryKeyPermissionCheck(authenticatedUser,contact);
             returnIterator = contact.toGetDto();
             returnContactList.add(returnIterator);
         }

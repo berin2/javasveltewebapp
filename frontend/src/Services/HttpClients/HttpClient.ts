@@ -61,7 +61,7 @@ class HttpClient {
 
     public validateStatus: (resp:Response) => Response = (response:Response) => {
         if (response.status >= 200 && response.status >= 300)
-            console.log("Server returned a non 200 status code for the paired request.");
+            throwError(`Non 200 status returned from server: ${response.status}`)
 
         return response;
     }

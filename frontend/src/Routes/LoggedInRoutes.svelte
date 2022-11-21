@@ -8,16 +8,19 @@
 
     import PaymentView from "../Components/Payment/PaymentView.svelte";
     import AccountSettings from "../Components/Account/AccountSettings.svelte";
+    import Profile from "../Components/Profile/Profile.svelte";
 
 
     $: showProfileSetupRoute = $authenticationStore && $authenticationStore.isIdentityVerified != true;
     $: showEmailSetupRoute = $authenticationStore && authenticationStore.isEmailValidated != true;
     $: accountSetupComplete = $authenticationStore && $authenticationStore.isIdentityVerified == true && $authenticationStore.isEmailValidated == true;
 </script>
-
 {#if showEmailSetupRoute}
-    <Route path="verifyemail"><EmailSetup/></Route>
+    <Route path="verifyemail">
+        <EmailSetup/>
+    </Route>
 {/if}
+
 {#if showProfileSetupRoute}
     <Route path="profilesetup"><ProfileSetup/></Route>
 {/if}
@@ -26,6 +29,7 @@
     <Route path="store"><StoreDisplay/></Route>
     <Route path="payment"><PaymentView/></Route>
     <Route path="account"><AccountSettings/></Route>
+    <Route path="profile"><Profile/></Route>
 {/if}
 
 

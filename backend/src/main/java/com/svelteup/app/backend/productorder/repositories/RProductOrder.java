@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface RProductOrder extends RSurrogateJpaRepository<ProductOrder, Long> {
 
     public List<ProductOrder> findAllByOwningUsername(String username);
+    public List<ProductOrder> findAllBySurrogateProductId(UUID surrogateProductId);
 }

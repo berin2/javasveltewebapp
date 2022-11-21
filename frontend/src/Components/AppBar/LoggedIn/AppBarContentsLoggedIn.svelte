@@ -11,10 +11,10 @@
     import {onMount} from "svelte";
     import {GET, HttpRequest} from "../../../Services/HttpClients/HttpClient";
     import authenticationStore from "../../../Stores/AuthenticationStore";
-    import AppInitDto from "../../../Dto/auth/AppInitDto";
+    import ApplicationUser from "../../../Dto/auth/ApplicationUser";
     import heartBeatStore from "../../HeartBeat/store/HeartBeatStore";
 
-    let authenticatedUser: AppInitDto = $authenticationStore;
+    let authenticatedUser: ApplicationUser = $authenticationStore;
     let toggleDrawer: boolean = false;
     let showNotificationDropdown: boolean = false;
     let showCartDropDown: boolean = false;

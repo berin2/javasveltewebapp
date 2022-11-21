@@ -1,8 +1,9 @@
 package com.svelteup.app.backend.profile.controller;
 
 import com.svelteup.app.backend.modelcontroller.controllers.abstractcontroller.AbstractController;
+import com.svelteup.app.backend.profile.dtos.AddressDto;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.profile.services.SUserProfileAddress;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,22 +22,22 @@ public class UserAddressController extends AbstractController implements IUserAd
     protected SUserProfileAddress sUserProfileAddress;
 
     @Override
-    public void post(SvelteUpUser authenticatedUser, Object o) throws NotSupportedException {
+    public void post(SvelteUpUser authenticatedUser, AddressDto dto) throws NotSupportedException {
         this.exceptionThrowerService.throwHttp405("post",this.getClass().toString(),authenticatedUser.getUsername());
     }
 
     @Override
-    public void put(SvelteUpUser authenticatedUser, SvelteUpUserAccountDto putUserAddressDto) throws NotSupportedException {
-        this.sUserProfileAddress.put(authenticatedUser.getUsername(),putUserAddressDto);
+    public void put(SvelteUpUser authenticatedUser, AddressDto dto) throws NotSupportedException {
+        this.sUserProfileAddress.put(authenticatedUser.getUsername(),dto);
     }
 
     @Override
-    public void delete(SvelteUpUser authenticatedUser, Object o) {
+    public void delete(SvelteUpUser authenticatedUser, AddressDto dto) {
         this.exceptionThrowerService.throwHttp405("delete",this.getClass().toString(),authenticatedUser.getUsername());
     }
 
     @Override
-    public ResponseEntity<SvelteUpUserAccountDto> get(SvelteUpUser authenticatedUser) throws NotSupportedException {
+    public ResponseEntity<AddressDto> get(SvelteUpUser authenticatedUser) throws NotSupportedException {
         return this.sUserProfileAddress.get(authenticatedUser.getUsername());
     }
 }

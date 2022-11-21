@@ -40,7 +40,8 @@ public class ProductReviewScoreCard extends OwningUserPrimaryKeySurrogateEntity 
 
     @Override
     public PutProductReviewScoreCardDto toExistingDto() {
-        return null;
+        PutProductReviewScoreCardDto returnDto = new PutProductReviewScoreCardDto(this);
+        return returnDto;
     }
 
     public void updateReviewScoreCard(PostProductReviewDto postProductReviewDto)

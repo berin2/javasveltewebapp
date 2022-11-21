@@ -16,7 +16,7 @@
     import {DELETE, HttpClient, HttpRequest, PUT} from "../../Services/HttpClients/HttpClient";
     import {httpClient} from "../../Stores/HttpClient";
     import ApiService from "../../Services/ApiService/ApiService";
-    import SvelteUpUserAccountDto from "../../Dto/profile/SvelteUpUserAccountDto";
+    import SvelteUpUserProfileDto from "../../Dto/profile/SvelteUpUserProfileDto";
     import DeleteAccountDto from "../../Dto/profile/DeleteAccountDto";
     import ContactDto from "../Contacts/Dto/ContactDto";
     import accountStore from "./store/AccountStore";
@@ -75,7 +75,7 @@
     }
 
     onMount(() => {
-        let dataDto: SvelteUpUserAccountDto = new SvelteUpUserAccountDto();
+        let dataDto: SvelteUpUserProfileDto = new SvelteUpUserProfileDto();
 
         function onSuccess() {
             messageToRender = SUCCESS;

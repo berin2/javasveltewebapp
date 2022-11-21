@@ -31,6 +31,9 @@ public interface IHttpControllerAdvice extends ValidationErrorControllerAdvice{
     @ExceptionHandler(Http500Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void sc500Exception(Http500Exception http500Exception);
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void defaultExceptionResponse(Exception exception);
 
 
 }

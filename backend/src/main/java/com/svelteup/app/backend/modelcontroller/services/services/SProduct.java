@@ -12,14 +12,14 @@ import com.svelteup.app.backend.modelcontroller.repositories.RProduct;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.HttpUuidService;
 import com.svelteup.app.backend.modelcontroller.services.abstractions.SSurrogateEntity;
 
+import com.svelteup.app.backend.productorder.models.ProductOrder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.ApplicationScope;
-import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.context.annotation.SessionScope;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.NotSupportedException;
 import java.io.IOException;
 import java.util.*;
@@ -37,18 +37,22 @@ public class SProduct  extends SSurrogateEntity<UUID,Product> implements HttpUui
     private final RProduct productRepository;
     protected  SImageS3 s3ImageService;
     protected  POwningUserNonPkAccessChecker pOwningUserNonPkAccessChecker;
+    protected  ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${spring.profiles.active}")
     String PROFILE;
 
 
-    public SProduct(RProduct productRepository, SImageS3 s3ImageService, POwningUserNonPkAccessChecker accessCheckerProxy)
+
+    public SProduct(RProduct productRepository, SImageS3 s3ImageService, POwningUserNonPkAccessChecker accessCheckerProxy,ApplicationEventPublisher publisher)
     {
         super(productRepository);
         this.productRepository = productRepository;
         this.s3ImageService = s3ImageService;
         this.pOwningUserNonPkAccessChecker = accessCheckerProxy;
+        this.applicationEventPublisher = publisher;
     }
+
 
     @Override
     public void post(String authenticatedUser, PostProductDto create_DTO) throws Http400Exception, Http401Exception, Http403Exception, UnsupportedOperationException, IOException, NotSupportedException, InterruptedException
@@ -90,13 +94,14 @@ public class SProduct  extends SSurrogateEntity<UUID,Product> implements HttpUui
             throw new Http403Exception(String.format(CANNOT_PERFORM_OPERATION, username,"DELETE",secondary_id));
 
         List<Integer> deleteIndexList = this.createZeroIndexedRange(Product.MAXIMUM_IMAGES);
-        productRepository.delete(discoveredProduct);
+        discoveredProduct.setActive(false);
+        repository.save(discoveredProduct);
         this.s3ImageService.delete(username,deleteIndexList,secondary_id,Product.class);
     }
 
     public ResponseEntity<List<PutProductDto>> findAllByUsername(String owning_username) throws NotSupportedException, IOException
     {
-        List<Product> productEntityList = productRepository.findAllByOwningUsername(owning_username);
+        List<Product> productEntityList = productRepository.findAllByOwningUsernameAndActiveTrue(owning_username);
         List<PutProductDto> returnList = new ArrayList<>();
 
         if(productEntityList.size() > 0) {
@@ -128,4 +133,5 @@ public class SProduct  extends SSurrogateEntity<UUID,Product> implements HttpUui
 
         return rangeList;
     }
+
 }

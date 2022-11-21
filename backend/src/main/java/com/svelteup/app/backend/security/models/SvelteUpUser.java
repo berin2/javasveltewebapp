@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity(name="account_details")
 @Table(name="account_details")
@@ -29,6 +30,9 @@ public class SvelteUpUser implements UserDetails, Serializable {
     @JoinColumn(name="username",referencedColumnName = "username")
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE,CascadeType.PERSIST}, orphanRemoval = true)
     protected List<AccountAuthority> accountAuthorityList;
+
+    public static final String SYSTEM_USER = "SYSTEM_";
+
     public SvelteUpUser(String username, String password)
     {
         super();
@@ -41,6 +45,12 @@ public class SvelteUpUser implements UserDetails, Serializable {
         this.isEmailValidated = false;
         this.isIdentityValidated = false;
         this.accountAuthorityList = new ArrayList<>();
+
+        if(SYSTEM_USER.equals(username))
+        {
+            this.is_enabled = false;
+            this.password= UUID.randomUUID().toString();
+        }
     }
 
     @Override

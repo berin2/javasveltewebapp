@@ -2,7 +2,7 @@ package com.svelteup.app.backend.profile.controller;
 
 import com.svelteup.app.backend.modelcontroller.controllers.abstractcontroller.AbstractController;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.profile.services.SUserProfile;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -30,7 +30,7 @@ public class SocialProfileController extends AbstractController implements ISoci
     }
 
     @Override
-    public void put(SvelteUpUser authenticatedUser, SvelteUpUserAccountDto putUserContactDto) throws NotSupportedException {
+    public void put(SvelteUpUser authenticatedUser, SvelteUpUserProfileDto putUserContactDto) throws NotSupportedException {
         this.userProfileService.put(authenticatedUser.getUsername(), putUserContactDto);
     }
 
@@ -39,8 +39,9 @@ public class SocialProfileController extends AbstractController implements ISoci
         this.exceptionThrowerService.throwHttp405("delete",this.getClass().toString(),authenticatedUser.getUsername());
     }
 
-    public ResponseEntity<SvelteUpUserAccountDto> get(@AuthenticationPrincipal SvelteUpUser authenticatedUser) throws NotSupportedException, IOException {
-        ResponseEntity<SvelteUpUserAccountDto> responseEntity = this.userProfileService.get(authenticatedUser.getUsername());
+    @Override
+    public ResponseEntity<SvelteUpUserProfileDto> get(@AuthenticationPrincipal SvelteUpUser authenticatedUser) throws NotSupportedException, IOException {
+        ResponseEntity<SvelteUpUserProfileDto> responseEntity = this.userProfileService.get(authenticatedUser.getUsername());
         return responseEntity;
     }
 

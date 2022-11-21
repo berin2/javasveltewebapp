@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.UUID;
 
 @Entity()
 @Data()
@@ -22,16 +23,14 @@ public class ProductQuestion extends PairedUserNonPrimaryKeyEntity {
     String productQuestion;
     String productQuestionAnswer;
     Date productQuestionDate;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="productId",referencedColumnName = "productId")
-    Product owningProduct;
+    UUID owningProductSurrogateId;
 
     public ProductQuestion(String authenticatedQuestionAsker,Product productToQuestion, String productQuestion)
     {
         super(productToQuestion.getOwningUsername(),authenticatedQuestionAsker);
         this.productQuestionDate = StaticDateService.getNow();
         this.productQuestion = productQuestion;
-        this.owningProduct = productToQuestion;
+        this.owningProductSurrogateId = productToQuestion.getSurrogateId();
 
         this.productQuestionAnswer = null;
     }

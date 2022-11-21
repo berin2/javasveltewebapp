@@ -1,11 +1,11 @@
 // @ts-ignore
-import SvelteUpUserAccountDto from "./SvelteUpUserAccountDto";
+import SvelteUpUserProfileDto from "./SvelteUpUserProfileDto";
 
 class UserProfileDto
 {
-    public  svelteUpProfileIdentity:SvelteUpUserAccountDto;
+    public  svelteUpProfileIdentity:SvelteUpUserProfileDto;
 
-    constructor(svelteUpProfile: SvelteUpUserAccountDto) {
+    constructor(svelteUpProfile: SvelteUpUserProfileDto) {
         this.svelteUpProfileIdentity = svelteUpProfile;
     }
 }

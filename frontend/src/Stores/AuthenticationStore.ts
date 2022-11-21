@@ -1,5 +1,5 @@
 import {Readable, Writable, writable} from "svelte/store";
-import AppInitDto from "../Dto/auth/AppInitDto";
-let authenticationStore:Writable<AppInitDto> = writable(new AppInitDto());
+import ApplicationUser from "../Dto/auth/ApplicationUser";
+let authenticationStore:Writable<ApplicationUser> = writable(new ApplicationUser());
 
 export default authenticationStore;

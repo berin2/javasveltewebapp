@@ -1,12 +1,14 @@
 package com.svelteup.app.backend.profile.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.svelteup.app.backend.productorder.dto.ProductReviewScoreCardDto.PutProductReviewScoreCardDto;
+import com.svelteup.app.backend.profile.models.SvelteUpUserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SvelteUpUserAccountDto {
+public class SvelteUpUserProfileDto {
    public Integer phoneNumberAreaCode;
    public Integer phoneNumberPhoneNumber;
 
@@ -23,5 +25,25 @@ public class SvelteUpUserAccountDto {
    public String aboutMe;
    public String image;
 
-   List<String> foeList = new ArrayList<>();
+   public PutProductReviewScoreCardDto productReviewScoreCard;
+
+   List<String> foeList;
+
+   public SvelteUpUserProfileDto(SvelteUpUserProfile profileEntity,String awsImage)
+   {
+      this.phoneNumberAreaCode = profileEntity.getPhoneNumberAreaCode();
+      this.phoneNumberPhoneNumber = profileEntity.getPhoneNumberPhoneNumber();
+      this.firstName = profileEntity.getFirstName();
+      this.lastName = profileEntity.getLastName();
+      this.email = profileEntity.getEmail();
+      this.addressLineOne = profileEntity.getAddressLineOne();
+      this.userProfileCity = profileEntity.getUserProfileCity();
+      this.userProfileState = profileEntity.getUserProfileState();
+      this.userProfileCountry = profileEntity.getUserProfileCountry();
+      this.zipCode = profileEntity.getUserProfileZipCode();
+      this.aboutMe =  profileEntity.getAboutMe();
+      this.image = awsImage;
+      this.productReviewScoreCard = profileEntity.getProductReviewScoreCard() != null ? profileEntity.getProductReviewScoreCard().toExistingDto():null;
+      foeList = new ArrayList<>();
+   }
 }

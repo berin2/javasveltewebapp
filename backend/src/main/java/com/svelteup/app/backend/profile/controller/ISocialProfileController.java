@@ -1,7 +1,7 @@
 package com.svelteup.app.backend.profile.controller;
 
 import com.svelteup.app.backend.api.ApplicationApi;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.utils.controllers.interfaces.HttpController;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
 import org.springframework.http.HttpStatus;
@@ -15,19 +15,19 @@ import java.io.IOException;
 /**
  * ISocialProfileController exposes endpoints for managing SocialProfile HostDescriptor.
  */
-public interface ISocialProfileController extends HttpController<Object, SvelteUpUserAccountDto,Object> {
+public interface ISocialProfileController extends HttpController<Object, SvelteUpUserProfileDto,Object> {
     @Override
     void post(@AuthenticationPrincipal SvelteUpUser authenticatedUser, Object o) throws NotSupportedException;
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(ApplicationApi.ACCOUNT_SOCIALPROFILE)
     @Override
-    void put(@AuthenticationPrincipal SvelteUpUser authenticatedUser, @RequestBody SvelteUpUserAccountDto putUserContactDto) throws NotSupportedException;
+    void put(@AuthenticationPrincipal SvelteUpUser authenticatedUser, @RequestBody SvelteUpUserProfileDto putUserContactDto) throws NotSupportedException;
 
     @Override
     void delete(@AuthenticationPrincipal SvelteUpUser authenticatedUser, Object o);
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(ApplicationApi.ACCOUNT_SOCIALPROFILE)
-    public ResponseEntity<SvelteUpUserAccountDto> get(@AuthenticationPrincipal SvelteUpUser authenticatedUser) throws NotSupportedException, IOException;
+    public ResponseEntity<SvelteUpUserProfileDto> get(@AuthenticationPrincipal SvelteUpUser authenticatedUser) throws NotSupportedException, IOException;
 }

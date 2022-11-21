@@ -4,7 +4,7 @@
     import {DELETE, HttpClient, HttpRequest} from "../../../Services/HttpClients/HttpClient";
     import {httpClient} from "../../../Stores/HttpClient";
     import ApiService from "../../../Services/ApiService/ApiService";
-    import AppInitDto from "../../../Dto/auth/AppInitDto";
+    import ApplicationUser from "../../../Dto/auth/ApplicationUser";
     import authenticationStore from "../../../Stores/AuthenticationStore";
     import AccountSetup from "./AccountSetupLinks.svelte";
     import {isFalsy} from "../../../Validators/IsFalsyObjectValidator";
@@ -22,10 +22,10 @@
 
 
     //@ts-ignore
-    let userProfile: AppInitDto = $authenticationStore;
+    let userProfile: ApplicationUser = $authenticationStore;
     let client: HttpClient = $httpClient;
     let reset: () => void = () => {
-        $authenticationStore = new AppInitDto();
+        $authenticationStore = new ApplicationUser();
     }
     let attemptLogout: () => void = () => {
         let request: HttpRequest = new HttpRequest(DELETE, ApiService.getLogoutUrl(), true, {"content-type": "application/json"});
@@ -35,7 +35,7 @@
 
     const toggleModal: () => void = () => drawerTucked = !drawerTucked;
     const NAV_MENU_LINKS: Object [] = [
-        {to: "/", text: "Profile", iconClass: "bi bi-person-circle"},
+        {to: "/profile", text: "Profile", iconClass: "bi bi-person-circle"},
         {to: "/store", text: "My Store", iconClass: "bi bi-shop"},
         {to: "/", text: "Sales", iconClass: "bi bi-tags"},
         {to: "/", text: "Purchases", iconClass: "bi bi-upc"},

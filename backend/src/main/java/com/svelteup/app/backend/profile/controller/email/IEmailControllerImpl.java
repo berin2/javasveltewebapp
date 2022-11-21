@@ -7,13 +7,12 @@ import com.svelteup.app.backend.aws.ses.services.SEmailVerification;
 import com.svelteup.app.backend.aws.ses.services.StaticThymeMapBuilderService;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http400Exception;
 import com.svelteup.app.backend.modelcontroller.controllers.controllerexceptions.Http500Exception;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
 import com.svelteup.app.backend.security.repositories.REmailVerificationToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Controller;
 
 import javax.transaction.NotSupportedException;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class IEmailControllerImpl implements IEmailController, ApplicationEventP
     }
 
     @Override
-    public void updateVerificationTokenAndResendEmail(SvelteUpUser user, SvelteUpUserAccountDto dto) throws NotSupportedException {
+    public void updateVerificationTokenAndResendEmail(SvelteUpUser user, SvelteUpUserProfileDto dto) throws NotSupportedException {
         EmailVerificationToken token = emailVerification.findBySurrogateIdWithCheck(user.getUsername(),user.getUsername());
         token.refreshToken(dto.email);
         Map<String,Object> thymeTemplate = StaticThymeMapBuilderService.buildVerificationMap(user.getUsername(),token.getEmailToken());

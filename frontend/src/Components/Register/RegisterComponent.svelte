@@ -11,7 +11,7 @@
 
     import {fade} from "svelte/transition";
     import ApiService from "../../Services/ApiService/ApiService";
-    import AppInitDto from "../../Dto/auth/AppInitDto";
+    import ApplicationUser from "../../Dto/auth/ApplicationUser";
     import TextInput from "../ReusableComponents/FormControls/TextInput.svelte";
 
     import EmailValidator from "../../Validators/EmailValidator";
@@ -26,7 +26,7 @@
     let success: (response: object) => void = (response: object) => {
         debugger;
         registerAttemptFailed = false;
-        let newUser: AppInitDto = new AppInitDto();
+        let newUser: ApplicationUser = new ApplicationUser();
         newUser.updateSelf(response);
         $authenticationStore = newUser;
     }

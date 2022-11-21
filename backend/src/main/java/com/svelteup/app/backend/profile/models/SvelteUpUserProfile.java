@@ -2,15 +2,18 @@ package com.svelteup.app.backend.profile.models;
 
 import com.svelteup.app.backend.modelcontroller.models.usermodels.OwningUserPrimaryKeySurrogateEntity;
 import com.svelteup.app.backend.productorder.models.ProductReviewScoreCard;
+import com.svelteup.app.backend.profile.dtos.AddressDto;
+import com.svelteup.app.backend.profile.dtos.PhoneNumberDto;
 import com.svelteup.app.backend.security.models.SvelteUpUser;
-import com.svelteup.app.backend.profile.dtos.SvelteUpUserAccountDto;
+import com.svelteup.app.backend.profile.dtos.SvelteUpUserProfileDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Entity
 @Data()
@@ -33,43 +36,37 @@ public class SvelteUpUserProfile extends OwningUserPrimaryKeySurrogateEntity {
     private String imagePath;
 
 
+
     public SvelteUpUserProfile(SvelteUpUser userToInitFor)
     {
         super(userToInitFor.getUsername());
         this.productReviewScoreCard = null;
     }
 
-    @JoinColumn(insertable = true,updatable = false,nullable = true, referencedColumnName = "owningUsername")
+    @JoinColumn(insertable = true,updatable = false,nullable = false, referencedColumnName = "owningUsername")
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
     @BatchSize(size = 1)
-    @NonNull protected ProductReviewScoreCard productReviewScoreCard;
+    protected ProductReviewScoreCard productReviewScoreCard;
 
-    public void updatePhoneNumber(SvelteUpUserAccountDto update_dto)
+    public void updatePhoneNumber(PhoneNumberDto update_dto)
     {
         this.phoneNumberAreaCode  = update_dto.phoneNumberAreaCode;
         this.phoneNumberPhoneNumber =  update_dto.phoneNumberPhoneNumber;
     }
 
-    public SvelteUpUserAccountDto toPutPhoneNumberDto()
+    public PhoneNumberDto toPutPhoneNumberDto()
     {
-        SvelteUpUserAccountDto returnDto = new SvelteUpUserAccountDto();
-        returnDto.phoneNumberAreaCode = this.phoneNumberAreaCode;
-        returnDto.phoneNumberPhoneNumber = this.phoneNumberPhoneNumber;
+        PhoneNumberDto returnDto = new PhoneNumberDto(this);
         return returnDto;
     }
 
-    public SvelteUpUserAccountDto toAddressDto()
+    public AddressDto toAddressDto()
     {
-        SvelteUpUserAccountDto returnDto = new SvelteUpUserAccountDto();
-        returnDto.addressLineOne = this.addressLineOne;
-        returnDto.userProfileState = this.userProfileState;
-        returnDto.userProfileCountry = this.userProfileCountry;
-        returnDto.zipCode = this.userProfileZipCode;
-
-        return returnDto;
+        AddressDto addressDto = new AddressDto(this);
+        return addressDto;
     }
 
-    public void updateAddress(SvelteUpUserAccountDto update_dto)
+    public void updateAddress(AddressDto update_dto)
     {
         this.addressLineOne = update_dto.addressLineOne;
         this.userProfileState =  update_dto.userProfileState;
@@ -77,15 +74,12 @@ public class SvelteUpUserProfile extends OwningUserPrimaryKeySurrogateEntity {
         this.userProfileZipCode = update_dto.zipCode;
     }
 
-    public SvelteUpUserAccountDto toUserProfileDto(String image) {
-        SvelteUpUserAccountDto returnDto = new SvelteUpUserAccountDto();
-        returnDto.aboutMe  = this.aboutMe;
-        returnDto.image = image;
-
+    public SvelteUpUserProfileDto toUserProfileDto(String image) {
+        SvelteUpUserProfileDto returnDto = new SvelteUpUserProfileDto(this,image);
         return  returnDto;
     }
 
-    public void updateUserProfileDto(SvelteUpUserAccountDto update_dto) {
+    public void updateUserProfileDto(SvelteUpUserProfileDto update_dto) {
         this.aboutMe = update_dto.aboutMe;
     }
 
@@ -94,14 +88,14 @@ public class SvelteUpUserProfile extends OwningUserPrimaryKeySurrogateEntity {
         return  phoneNumberAreaCode.toString() + phoneNumberPhoneNumber.toString();
     }
 
-    public void initializeSvelteUpUserProfile(SvelteUpUserAccountDto svelteUpUserAccountDto)
+    public void initializeSvelteUpUserProfile(SvelteUpUserProfileDto svelteUpUserProfileDto)
     {
-        this.firstName  =  svelteUpUserAccountDto.firstName;
-        this.lastName  =  svelteUpUserAccountDto.lastName;
+        this.firstName  =  svelteUpUserProfileDto.firstName;
+        this.lastName  =  svelteUpUserProfileDto.lastName;
 
-        this.addressLineOne  = svelteUpUserAccountDto.addressLineOne;
-        this.userProfileState = svelteUpUserAccountDto.userProfileState;
-        this.userProfileCity =  svelteUpUserAccountDto.userProfileCity;
-        this.userProfileZipCode = svelteUpUserAccountDto.zipCode;
+        this.addressLineOne  = svelteUpUserProfileDto.addressLineOne;
+        this.userProfileState = svelteUpUserProfileDto.userProfileState;
+        this.userProfileCity =  svelteUpUserProfileDto.userProfileCity;
+        this.userProfileZipCode = svelteUpUserProfileDto.zipCode;
     }
 }

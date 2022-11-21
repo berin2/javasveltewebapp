@@ -23,55 +23,5 @@ import java.util.UUID;
 @RestController()
 public class ThymeController  {
 
-    @Autowired
-    SImageS3 sImageS3;
-    File springfile;
-    @Autowired
-    SProduct sProduct;
-    @Autowired
-    RProduct rProduct;
-    UUID productUUID;
-    @Autowired protected SProduct productService;
-
-    @GetMapping("/testing")
-    public @ResponseBody PutProductDto testTypescriptClient() throws IOException {
-
-        List<Product> discoveredProduct = this.rProduct.findAllByOwningUsername("test44");
-        Product productToReturn = discoveredProduct.get(0);
-        String[] arr = sImageS3.getMultipleImages(Product.class,"test44",Product.MAXIMUM_IMAGES,productToReturn.getSurrogateId());
-        //need processing function here
-        PutProductDto retDto = productToReturn.toExistingDto();
-        retDto.productImageStrings = arr;
-        return retDto;
-    }
-
-    @PutMapping("/test-two")
-    @ResponseStatus(HttpStatus.OK)
-    public void testTwo( @RequestBody PutProductDto putProductDto) throws IOException, NotSupportedException, InterruptedException {
-        sProduct.put("test44",putProductDto);
-    }
-
-    @PostMapping("/test-three")
-    @ResponseStatus(HttpStatus.OK)
-    public void testThree(@RequestBody PutProductDto dto) throws IOException, NotSupportedException, InterruptedException {
-        sProduct.post("test-44",dto);
-    }
-
-    @PostConstruct
-    public void buildFile() throws IOException, NotSupportedException, InterruptedException {
-        Resource springFile = new ClassPathResource("/static/images/sveltelogo.png");
-        this.springfile = springFile.getFile();
-        PutProductDto testProduct = new PutProductDto();
-        testProduct.productCost =71.12;
-        testProduct.productName = "Iceberg Jolt DB-Test";
-        testProduct.productCalories = 789;
-        testProduct.productDescription ="Test";
-        testProduct.productAcceptsReturns = true;
-
-        testProduct.productImageStrings[0] = null;
-        testProduct.productImageStrings[1] = null;
-
-        this.sProduct.post("test44", testProduct);
-    }
 
    }
